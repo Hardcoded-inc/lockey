@@ -1,37 +1,19 @@
-import React, { useState } from "react";
-import {
-  AppBar,
-  IconButton,
-  Button,
-  Avatar,
-} from "@react-native-material/core";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import { View } from "react-native";
+import { Text, Stack, Button, Divider } from "@react-native-material/core";
 
-const Home = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+const Home = ({ navigation: { navigate } }) => {
   return (
-    <AppBar
-      title="Home"
-
-      trailing={props =>
-        loggedIn ? (
-          <IconButton
-            icon={<Avatar label="Yaman KATBY" size={28} />}
-            onPress={() => setLoggedIn(!loggedIn)}
-            {...props}
-          />
-        ) : (
-          <Button
-            variant="text"
-            title="Login"
-            compact
-            style={{ marginEnd: 4 }}
-            onPress={() => setLoggedIn(!loggedIn)}
-            {...props}
-          />
-        )
-      }
-    />
+    <View style={{ flex: 1 }}>
+      <Stack m={12} spacing={12}>
+        <Text variant="h5">Skan QR</Text>
+        <Text variant="subtitle1">
+          Zeksanuj kod QR umieszczony bezpośrednio obok wejścia, a aplikacja
+          automatycznie przeniesie Cię do konkretnych drzwi.
+        </Text>
+        <Button title="Uruchom skaner QR" onPress={() => navigate("QR")} />
+        <Divider style={{ marginTop: 12 }} color="green" />
+      </Stack>
+    </View>
   );
 };
 

@@ -1,15 +1,15 @@
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import TopBar from './src/components/Nav'
-import GlobalStyles from './src/components/GlobalStyles';
-import Register from './src/pages/Register';
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TopBar from "./src/components/TopBar";
+import GlobalStyles from "./src/components/GlobalStyles";
+import BottomNav from "./src/components/BottomNav";
+import { Text } from "react-native";
 
 export default function App() {
   return (
-    <SafeAreaView style={GlobalStyles.AndroidSafeArea}>
-      {/* <TopBar /> */}
-      <Register />
-    </SafeAreaView>
+    <>
+      <TopBar />
+      <BottomNav />
+    </>
   );
 }
-
