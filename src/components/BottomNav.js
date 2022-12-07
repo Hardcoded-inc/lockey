@@ -27,6 +27,8 @@ const BottomNav = () => {
               iconName = focused ? "ios-key" : "ios-key-outline";
             } else if (route.name === "Users") {
               iconName = focused ? "ios-people" : "ios-people-outline";
+            } else if (route.name === "QR") {
+              iconName = focused ? "ios-barcode" : "ios-barcode-outline";
             }
 
             // You can return any component that you like here!
