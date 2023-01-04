@@ -1,16 +1,26 @@
-import React, { useState } from "react";
-import {
-  SafeAreaProvider,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-} from "react-native";
-import { AppBar } from "@react-native-material/core";
+import React, { useContext } from "react";
+import { AuthContext } from "./AuthContext";
+import { StyleSheet, SafeAreaView, StatusBar } from "react-native";
+import { AppBar, Button } from "@react-native-material/core";
 
 const TopBar = () => {
+  const { signOut } = useContext(AuthContext);
+
   return (
     <SafeAreaView style={styles.container}>
-      <AppBar title="Lockey v.0000001" />
+      <AppBar
+        title="Lockey v.0000001"
+        trailing={(props) => (
+          <Button
+            variant="text"
+            title="WYLOGUJ SIĘ"
+            compact
+            style={{ marginEnd: 4 }}
+            onPress={() => signOut()}
+            {...props}
+          />
+        )}
+      />
     </SafeAreaView>
   );
 };

@@ -1,13 +1,18 @@
-import UserRegistration from "../components/UserRegistration";
+// Import React and Component
+import React, { useState, createRef } from "react";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  ScrollView,
+  Image,
+  Keyboard,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+} from "react-native";
 
-const Register = () => {
-    return (
-        <>
-            <Text style={styles.title}>React Native on Back4App</Text>
-            <Text>User registration tutorial</Text>
-            <UserRegistration />
-        </>
-      );
-}
-
+const Register = ({ navigation }) => {
+  return <Text>Register</Text>;
+};
 export default Register;
