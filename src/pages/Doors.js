@@ -1,12 +1,8 @@
 import { View, ScrollView, ActivityIndicator, Button } from "react-native";
 import { ListItem, Text, Stack, Divider } from "@react-native-material/core";
 import { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const StackNav = createNativeStackNavigator();
-
-export const DoorsList = ({ navigation }) => {
+export const Doors = ({ navigation }) => {
   const [doors, setDoors] = useState([
     {
       title: "Test doors title",
@@ -68,36 +64,6 @@ export const DoorsList = ({ navigation }) => {
         )}
       </Stack>
     </View>
-  );
-};
-
-const SingleDoors = ({ route, navigation }) => {
-  const { id } = route.params;
-
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Doors</Text>
-      <Text>itemId: {JSON.stringify(id)}</Text>
-    </View>
-  );
-};
-
-const Doors = () => {
-  return (
-    <NavigationContainer independent="true">
-      <StackNav.Navigator>
-        <StackNav.Screen
-          options={{ headerShown: false }}
-          name="DoorsList"
-          component={DoorsList}
-        />
-        <StackNav.Screen
-          name="SingleDoors"
-          component={SingleDoors}
-          options={({ route }) => ({ title: route.params.title })}
-        />
-      </StackNav.Navigator>
-    </NavigationContainer>
   );
 };
 
