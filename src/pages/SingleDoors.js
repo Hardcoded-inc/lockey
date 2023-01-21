@@ -1,31 +1,46 @@
-import { View, ActivityIndicator } from "react-native";
-import { Text, Stack, Button } from "@react-native-material/core";
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+import {
+  Text,
+  Stack,
+  Button,
+  Box,
+  Flex,
+  Divider,
+  Icon,
+} from "@react-native-material/core";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useState, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
+import { API_URL } from "@env";
+import * as Location from "expo-location";
+
+console.disableYellowBox = true;
 
 const SingleDoors = ({ route, navigation }) => {
   const { id } = route.params;
 
-  const [doors, setDoors] = useState({
-    title: "Test doors title",
-    latitude: 37.78825,
-    longitude: -122.4324,
-    id: 8,
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const [singleDoors, setSingleDoors] = useState();
+  const [singleDoorsStatus, setSingleDoorsStatus] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isBiometry, setIsBiomtery] = useState(false);
+  const [isLocation, setIsLocation] = useState(false);
+  const [location, setLocation] = useState();
+  const [doorPermission, setDoorPermission] = useState(true);
+  const [isLocationMatched, setIsLocationMatched] = useState(false);
+  //Geolocation.getCurrentPosition();
 
   useEffect(() => {
     const fetchDoors = async () => {
       try {
-        const res = await fetch(
-          "https://localhost/api/doors?" +
-            new URLSearchParams({
-              id: id,
-            })
-        );
+        const res = await fetch(API_URL + "/doors/" + id);
         const json = await res.json();
-        setDoors(json);
+        setSingleDoors(json);
       } catch (e) {
         console.log(e);
       } finally {
@@ -39,15 +54,62 @@ const SingleDoors = ({ route, navigation }) => {
         setIsBiomtery(compatible);
       } catch (e) {
         console.log(e);
+      }
+    };
+
+    const checkLocalisation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      try {
+        const res = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Low,
+        });
+        setLocation(res);
+        console.log("location" + res);
+      } catch (e) {
+        console.log(e);
       } finally {
-        console.log(isBiometry);
+        setIsLocation(true);
+
+        const phone_lat = 2;
+        const phone_long = 3;
+
+        //to do - replace with data from db
+        const doors_lat = 2;
+        const doors_long = 3;
+
+        if (phone_lat === doors_lat && phone_long === doors_long) {
+          setIsLocationMatched(true);
+        } else {
+          setIsLocationMatched(false);
+        }
       }
     };
 
     fetchDoors();
     isBiometricsAvailable();
-  }),
-    [];
+    checkLocalisation();
+  }, []);
+
+  const callDoorsAPI = async () => {
+    try {
+      const res = await fetch(API_URL + "/doors/" + id + "/open", {
+        method: "POST",
+      });
+      //const json = await JSON.stringify(res);
+      //setSingleDoorsStatus(json);
+      console.log(res.text());
+    } catch (e) {
+      console.log(e);
+    } finally {
+      // alert(singleDoorsStatus);
+    }
+  };
 
   const openDoors = async () => {
     const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
@@ -63,7 +125,7 @@ const SingleDoors = ({ route, navigation }) => {
       const biometricAuth = await LocalAuthentication.authenticateAsync();
 
       if (biometricAuth.success === true) {
-        alert("Drzwi zostaną otwarte");
+        callDoorsAPI();
       } else {
         alert("Spróbuj ponownie");
       }
@@ -71,19 +133,141 @@ const SingleDoors = ({ route, navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View>
       {isLoading ? (
         <ActivityIndicator size="large" color="#00ff00" />
       ) : (
         <>
-          <Stack m={12} spacing={12}>
-            <Text variant="h5">{doors.title}</Text>
-            <Text variant="h6">ID: {doors.id}</Text>
-            <Text variant="subtitle1">
-              Zeksanuj kod QR umieszczony bezpośrednio obok wejścia, a aplikacja
-              automatycznie przeniesie Cię do konkretnych drzwi.
-            </Text>
-            <Button title="Otwórz drzwi" onPress={() => openDoors()} />
+          <Stack m={12} spacing={24} display={"flex"}>
+            <Flex style={styles.flex_wrapper}>
+              {singleDoorsStatus ? (
+                <>
+                  {doorPermission && isLocationMatched ? (
+                    <>
+                      <TouchableOpacity onPress={() => openDoors()}>
+                        <Box
+                          w={144}
+                          h={144}
+                          p={16}
+                          m={6}
+                          mt={16}
+                          style={styles.container}
+                          borderColor={"green"}
+                        >
+                          <Image
+                            style={styles.tinyLogo}
+                            source={require("../assets/locked.png")}
+                          />
+                        </Box>
+                      </TouchableOpacity>
+
+                      <Text variant="button">
+                        NACIŚNIJ KŁÓDKĘ, BY OTWORZYĆ DRZWI
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Box
+                        w={144}
+                        h={144}
+                        p={16}
+                        m={6}
+                        mt={16}
+                        style={styles.container}
+                        borderColor={"red"}
+                      >
+                        <Image
+                          style={styles.tinyLogo}
+                          source={require("../assets/locked.png")}
+                        />
+                      </Box>
+
+                      <Text variant="button">NIE MOŻESZ OTWORZYĆ DRZWI</Text>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Box
+                    w={144}
+                    h={144}
+                    p={16}
+                    m={6}
+                    mt={16}
+                    style={styles.container}
+                    borderColor={"blue"}
+                  >
+                    <Image
+                      style={styles.tinyLogo}
+                      source={require("../assets/unlocked.png")}
+                    />
+                  </Box>
+
+                  <Text variant="button">DRZWI OTWARTE</Text>
+                </>
+              )}
+            </Flex>
+
+            <Divider color={"black"} />
+
+            <Flex>
+              <Text variant="overline">NAZWA DRZWI</Text>
+              <Text variant="h5">{singleDoors[1]}</Text>
+            </Flex>
+
+            <Flex>
+              <Text variant="overline">LOKALIZACJA DRZWI</Text>
+              <Text variant="h5">47.81 x 19.06</Text>
+            </Flex>
+
+            <Flex>
+              <Text variant="overline">DOSTĘP DO DRZWI</Text>
+              <Flex direction="row" alignItems="center">
+                {doorPermission ? (
+                  <Ionicons
+                    name={"checkmark-outline"}
+                    size={24}
+                    color={"green"}
+                  />
+                ) : (
+                  <Ionicons name={"close-outline"} size={24} color={"red"} />
+                )}
+                <Text variant="body1"> Autoryzacja dostępu</Text>
+              </Flex>
+              <Flex direction="row" alignItems="center">
+                {!isLocation ? (
+                  <>
+                    <Ionicons
+                      name={"reload-outline"}
+                      size={24}
+                      color={"orange"}
+                    />
+                    <Text style={styles.text} variant="body1">
+                      Oczekiwanie na określenie lokalizacji...
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    {isLocationMatched ? (
+                      <Ionicons
+                        name={"checkmark-outline"}
+                        size={24}
+                        color={"green"}
+                      />
+                    ) : (
+                      <Ionicons
+                        name={"close-outline"}
+                        size={24}
+                        color={"red"}
+                      />
+                    )}
+                    <Text style={styles.text} variant="body1">
+                      Urządzenie w zasięgu drzwi
+                    </Text>
+                  </>
+                )}
+              </Flex>
+            </Flex>
           </Stack>
         </>
       )}
@@ -92,3 +276,28 @@ const SingleDoors = ({ route, navigation }) => {
 };
 
 export default SingleDoors;
+
+const styles = StyleSheet.create({
+  tinyLogo: {
+    width: 64,
+    height: 64,
+  },
+  container: {
+    borderRadius: 128,
+    borderWidth: 4,
+    backgroundColor: "#D9D9D9",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  flex_wrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 32,
+    direction: "row",
+  },
+  text: {
+    marginLeft: 5,
+  },
+});

@@ -1,26 +1,16 @@
 import { View, ScrollView, ActivityIndicator, Button } from "react-native";
 import { ListItem, Text, Stack, Divider } from "@react-native-material/core";
 import { useState, useEffect } from "react";
+import { API_URL } from "@env";
 
 export const Doors = ({ navigation }) => {
-  const [doors, setDoors] = useState([
-    {
-      title: "Test doors title",
-      localisation: "San Francisco, US",
-      id: 8,
-    },
-    {
-      title: "Test doors title2",
-      localisation: "Los Angeles, US",
-      id: 1,
-    },
-  ]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [doors, setDoors] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDoors = async () => {
       try {
-        const res = await fetch("https://localhost/api/doors");
+        const res = await fetch(API_URL + "/doors");
         const json = await res.json();
         setDoors(json);
       } catch (e) {
@@ -31,8 +21,7 @@ export const Doors = ({ navigation }) => {
     };
 
     fetchDoors();
-  }),
-    [];
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -48,14 +37,14 @@ export const Doors = ({ navigation }) => {
           <ScrollView style={{ marginBottom: 100 }} horizontal="true">
             {doors.map((door) => (
               <ListItem
-                key={door.id}
-                title={door.title}
-                secondaryText={door.localisation}
-                id={"door_" + door.id}
+                key={door[0]}
+                title={door[1]}
+                secondaryText="xxx"
+                id={"door_" + door[0]}
                 onPress={() => {
                   navigation.navigate("SingleDoors", {
-                    title: door.title,
-                    id: door.id,
+                    title: door[1],
+                    id: door[0],
                   });
                 }}
               />
