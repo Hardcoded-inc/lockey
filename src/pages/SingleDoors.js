@@ -20,20 +20,17 @@ import * as LocalAuthentication from "expo-local-authentication";
 import { API_URL } from "@env";
 import * as Location from "expo-location";
 
-console.disableYellowBox = true;
-
 const SingleDoors = ({ route, navigation }) => {
   const { id } = route.params;
 
   const [singleDoors, setSingleDoors] = useState();
-  const [singleDoorsStatus, setSingleDoorsStatus] = useState(false);
+  const [singleDoorsStatus, setSingleDoorsStatus] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isBiometry, setIsBiomtery] = useState(false);
   const [isLocation, setIsLocation] = useState(false);
   const [location, setLocation] = useState();
   const [doorPermission, setDoorPermission] = useState(true);
   const [isLocationMatched, setIsLocationMatched] = useState(false);
-  //Geolocation.getCurrentPosition();
 
   useEffect(() => {
     const fetchDoors = async () => {
@@ -41,6 +38,7 @@ const SingleDoors = ({ route, navigation }) => {
         const res = await fetch(API_URL + "/doors/" + id);
         const json = await res.json();
         setSingleDoors(json);
+        setSingleDoorsStatus(json.is_open);
       } catch (e) {
         console.log(e);
       } finally {
@@ -97,17 +95,22 @@ const SingleDoors = ({ route, navigation }) => {
   }, []);
 
   const callDoorsAPI = async () => {
+    let res = null;
     try {
-      const res = await fetch(API_URL + "/doors/" + id + "/open", {
+      res = await fetch(API_URL + "/doors/" + id + "/open", {
         method: "POST",
       });
-      //const json = await JSON.stringify(res);
-      //setSingleDoorsStatus(json);
-      console.log(res.text());
     } catch (e) {
       console.log(e);
     } finally {
-      // alert(singleDoorsStatus);
+      if (res.status === 200) {
+        alert(
+          "Drzwi zostały otwarte. Zamek pozostanie automatycznie zamknięty za 10 sekund"
+        );
+        setSingleDoorsStatus(true);
+      } else {
+        alert("Wystąpił błąd");
+      }
     }
   };
 
@@ -140,7 +143,7 @@ const SingleDoors = ({ route, navigation }) => {
         <>
           <Stack m={12} spacing={24} display={"flex"}>
             <Flex style={styles.flex_wrapper}>
-              {singleDoorsStatus ? (
+              {!singleDoorsStatus ? (
                 <>
                   {doorPermission && isLocationMatched ? (
                     <>
@@ -212,7 +215,7 @@ const SingleDoors = ({ route, navigation }) => {
 
             <Flex>
               <Text variant="overline">NAZWA DRZWI</Text>
-              <Text variant="h5">{singleDoors[1]}</Text>
+              <Text variant="h5">{singleDoors.name}</Text>
             </Flex>
 
             <Flex>

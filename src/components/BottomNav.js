@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
 import Home from "../pages/Home";
 import QR_View from "../pages/QR";
 import Doors from "../pages/Doors";
