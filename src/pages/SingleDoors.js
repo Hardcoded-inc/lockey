@@ -33,7 +33,7 @@ const SingleDoors = ({ route, navigation }) => {
   const [doorPermission, setDoorPermission] = useState(true);
   const [isLocationMatched, setIsLocationMatched] = useState(false);
 
-  const jwt = useAuthState();
+  const { jwt } = useAuthState();
 
   useEffect(() => {
     const fetchDoors = async () => {

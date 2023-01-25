@@ -6,7 +6,7 @@ import { useAuthDispatch, useAuthState } from "../hooks/useAuth";
 
 const TopBar = () => {
   const { signIn, signOut, restoreToken } = useAuthDispatch();
-  const jwt = useAuthState();
+  const { jwt } = useAuthState();
 
   return (
     <SafeAreaView style={styles.container}>

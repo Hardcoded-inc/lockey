@@ -15,7 +15,7 @@ const Login = ({ navigation: { navigate } }) => {
   const [isBiometricSupported, setIsBiometricSupported] = React.useState(true);
 
   const { signIn, signOut, restoreToken } = useAuthDispatch();
-  const jwt = useAuthState();
+  const { jwt } = useAuthState();
 
   useEffect(() => {
     (async () => {

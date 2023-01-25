@@ -14,12 +14,11 @@ import {
   JWTProvider,
 } from "./src/hooks/useAuth";
 
-const AppInner = () => {
+const App = () => {
   const Stack = createStackNavigator();
 
-  const dupa = useAuthDispatch();
-  console.log("1", dupa);
-  const jwt = useAuthState();
+  const { restoreToken } = useAuthDispatch();
+  const { isLoading, jwt } = useAuthState();
 
   useEffect(() => {
     const bootstrapAsync = async () => {
@@ -41,9 +40,9 @@ const AppInner = () => {
     bootstrapAsync();
   }, []);
 
-  if (state.isLoading) {
-    return <Splash />;
-  }
+  // if (isLoading) {
+  //   return <Splash />;
+  // }
 
   return (
     <NavigationContainer>
@@ -72,10 +71,10 @@ const AppInner = () => {
   );
 };
 
-const App = () => {
+const AppWrapper = () => (
   <JWTProvider>
-    <AppInner />
-  </JWTProvider>;
-};
+    <App />
+  </JWTProvider>
+);
 
-export default App;
+export default AppWrapper;
