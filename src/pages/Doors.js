@@ -1,11 +1,18 @@
-import { View, ScrollView, ActivityIndicator, Button } from "react-native";
-import { ListItem, Text, Stack, Divider } from "@react-native-material/core";
+import { View, ScrollView, ActivityIndicator } from "react-native";
+import {
+  ListItem,
+  Text,
+  Stack,
+  Divider,
+  Button,
+} from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "@env";
 
 export const Doors = ({ navigation }) => {
   const [doors, setDoors] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(true);
 
   useEffect(() => {
     const fetchDoors = async () => {
@@ -21,7 +28,7 @@ export const Doors = ({ navigation }) => {
     };
 
     fetchDoors();
-  }, []);
+  }, [doors]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -30,6 +37,15 @@ export const Doors = ({ navigation }) => {
         <Text variant="subtitle1">
           Lista przypisanych do Twojego konta drzwi
         </Text>
+        {isAdmin ? (
+          <Button
+            title="Dodaj nowe drzwi"
+            onPress={() => navigation.navigate("AddDoors")}
+          />
+        ) : (
+          ""
+        )}
+
         <Divider style={{ marginTop: 12 }} color="green" />
         {isLoading ? (
           <ActivityIndicator size="large" color="#00ff00" />
@@ -37,14 +53,13 @@ export const Doors = ({ navigation }) => {
           <ScrollView style={{ marginBottom: 100 }} horizontal="true">
             {doors.map((door) => (
               <ListItem
-                key={door[0]}
-                title={door[1]}
-                secondaryText="xxx"
-                id={"door_" + door[0]}
+                key={door.ID}
+                title={door.name}
+                id={"door_" + door.ID}
                 onPress={() => {
                   navigation.navigate("SingleDoors", {
-                    title: door[1],
-                    id: door[0],
+                    title: door.name,
+                    id: door.ID,
                   });
                 }}
               />

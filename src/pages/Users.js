@@ -1,42 +1,23 @@
-import { View, ScrollView, ActivityIndicator, Button } from "react-native";
-import { ListItem, Text, Stack, Divider } from "@react-native-material/core";
+import { View, ScrollView, ActivityIndicator } from "react-native";
+import {
+  ListItem,
+  Text,
+  Stack,
+  Divider,
+  Button,
+} from "@react-native-material/core";
 import { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { API_URL } from "@env";
 
-const StackNav = createNativeStackNavigator();
-
-export const UsersList = ({ navigation }) => {
-  const [users, setUsers] = useState([
-    {
-      name: "Tom Johnes",
-      id: 8,
-    },
-    {
-      name: "Emily Brown",
-      id: 1,
-    },
-    {
-      name: "Emily Brown",
-      id: 2,
-    },
-    {
-      name: "Emily Brown",
-      id: 3,
-    },
-    {
-      name: "Emily Brown",
-      id: 4,
-    },
-  ]);
-  const [isLoading, setIsLoading] = useState(false);
+export const Doors = ({ navigation }) => {
+  const [users, setUsers] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchDoors = async () => {
       try {
-        const res = await fetch("https://localhost/api/users");
-        const json = await res.json();
-        setUsers(json);
+        const res = await fetch(API_URL + "/users");
+        setUsers(res);
       } catch (e) {
         console.log(e);
       } finally {
@@ -44,28 +25,31 @@ export const UsersList = ({ navigation }) => {
       }
     };
 
-    fetchUsers();
-  }),
-    [];
+    fetchDoors();
+  }, [users]);
 
   return (
     <View style={{ flex: 1 }}>
       <Stack m={12} spacing={12}>
         <Text variant="h5">Lista użytkowników</Text>
+        <Button
+          title="Dodaj nowego użytkownika"
+          onPress={() => navigation.navigate("AddUser")}
+        />
         <Divider style={{ marginTop: 12 }} color="green" />
         {isLoading ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : (
-          <ScrollView style={{ marginBottom: 100 }} horizontal="true">
+          <ScrollView style={{ marginBottom: 120 }} horizontal="true">
             {users.map((user) => (
               <ListItem
-                key={user.id}
-                title={user.name}
-                id={"user_" + user.id}
+                key={user.ID}
+                title={user.username}
+                id={"user_" + user.ID}
                 onPress={() => {
-                  navigation.navigate("SingleUsers", {
-                    name: user.name,
-                    id: user.id,
+                  navigation.navigate("SingleUser", {
+                    title: user.username,
+                    id: user.ID,
                   });
                 }}
               />
@@ -77,34 +61,4 @@ export const UsersList = ({ navigation }) => {
   );
 };
 
-const SingleUser = ({ route, navigation }) => {
-  const { id } = route.params;
-
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>User</Text>
-      <Text>itemId: {JSON.stringify(id)}</Text>
-    </View>
-  );
-};
-
-const Users = () => {
-  return (
-    <NavigationContainer independent="true">
-      <StackNav.Navigator>
-        <StackNav.Screen
-          options={{ headerShown: false }}
-          name="UsersList"
-          component={UsersList}
-        />
-        <StackNav.Screen
-          name="SingleUsers"
-          component={SingleUser}
-          options={({ route }) => ({ name: route.params.name })}
-        />
-      </StackNav.Navigator>
-    </NavigationContainer>
-  );
-};
-
-export default Users;
+export default Doors;

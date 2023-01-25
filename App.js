@@ -7,8 +7,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Navigation from "./src/pages/Navigation";
 import Login from "./src/pages/Login";
-import Register from "./src/pages/Register";
 import Splash from "./src/pages/Splash";
+
+console.disableYellowBox = true;
 
 const App = ({ navigation }) => {
   const Stack = createStackNavigator();
@@ -99,13 +100,6 @@ const App = ({ navigation }) => {
               <Stack.Screen
                 name="SignIn"
                 component={Login}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="Register"
-                component={Register}
                 options={{
                   headerShown: false,
                 }}
