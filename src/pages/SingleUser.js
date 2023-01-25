@@ -30,10 +30,6 @@ const SingleUser = ({ route, navigation }) => {
   const { id } = route.params;
 
   const [user, setUser] = useState();
-  const [doors, setDoors] = useState([
-    [1, "Dupa666", false, "2023-01-14 19:31:44.307000"],
-    [2, "Dupa333", false, "2023-01-14 19:31:44.307000"],
-  ]);
   const [doorId, setDoorId] = useState();
   const [pickedDoor, setPickedDoor] = useState();
   const [userId, setUserId] = useState();
@@ -41,11 +37,13 @@ const SingleUser = ({ route, navigation }) => {
   const [visible, setVisible] = useState(false);
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [flag, setFlag] = useState();
+  const [userDoors, setUserDoors] = useState();
+  const [isUserDoors, setIsUserDoors] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(API_URL + "/users/" + id);
+        const res = await fetch(API_URL + "/users/" + id + "/available_doors");
         const json = await res.json();
         setUser(json);
       } catch (e) {
@@ -56,24 +54,15 @@ const SingleUser = ({ route, navigation }) => {
       }
     };
 
-    //TODO: fetch all user doors
-    const fetchDoors = async () => {
-      try {
-        const res = await fetch(API_URL + "/doors/1");
-        const json = await res.json();
-        setDoors(json);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setIsLoading(false);
-        console.log(doors);
-      }
-    };
-
     fetchUser();
-
-    //fetchDoors();
   }, [flag]);
+
+  useEffect(() => {
+    if (setIsLoading === false) {
+      setUserDoors(user.available_doors);
+      setIsUserDoors(true);
+    }
+  }, [user]);
 
   const activateDialog = (id, type) => {
     switch (type) {
@@ -164,14 +153,18 @@ const SingleUser = ({ route, navigation }) => {
                 <Text variant="overline">
                   DOSTĘP DO DRZWI (NACIŚNIJ BY USUNĄĆ)
                 </Text>
-                {doors.map((door) => (
-                  <ListItem
-                    key={door.ID}
-                    title={door.username}
-                    id={"door_" + door.ID}
-                    onPress={() => activateDialog(id, "detach")}
-                  />
-                ))}
+                {isUserDoors ? (
+                  userDoors.map((door) => (
+                    <ListItem
+                      key={door.ID}
+                      title={door.name}
+                      id={"door_" + door.ID}
+                      onPress={() => activateDialog(id, "detach")}
+                    />
+                  ))
+                ) : (
+                  <></>
+                )}
               </Flex>
 
               <Flex>
@@ -224,14 +217,14 @@ const SingleUser = ({ route, navigation }) => {
               <Stack spacing={2}>
                 <Text>Wybierz jedne z dostępnych dla użytkownika drzwi</Text>
                 <Text>Wybrane drzwi: {pickedDoor}</Text>
-                {doors.map((door) => (
+                {/* {userDoors.map((door) => (
                   <ListItem
                     key={door.ID}
-                    title={door.username}
+                    title={door.name}
                     id={"door_" + door.ID}
                     onPress={() => setPickedDoor(door.username)}
                   />
-                ))}
+                ))} */}
               </Stack>
             </DialogContent>
             <DialogActions>

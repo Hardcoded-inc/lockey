@@ -50,7 +50,7 @@ export const Doors = ({ navigation }) => {
         {isLoading ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : (
-          <ScrollView style={{ marginBottom: 100 }} horizontal="true">
+          <ScrollView style={{ marginBottom: 140 }} horizontal="true">
             {doors.map((door) => (
               <ListItem
                 key={door.ID}
