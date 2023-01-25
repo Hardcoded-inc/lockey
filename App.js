@@ -6,7 +6,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Navigation from "./src/pages/Navigation";
 import Login from "./src/pages/Login";
-import Splash from "./src/pages/Splash";
 
 import {
   useAuthDispatch,

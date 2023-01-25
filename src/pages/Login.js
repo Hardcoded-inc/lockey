@@ -6,12 +6,15 @@ import {
   Text,
   Flex,
   Button,
+  IconButton,
 } from "@react-native-material/core";
 import { useAuthDispatch, useAuthState } from "../hooks/useAuth";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Login = ({ navigation: { navigate } }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isPass, setIsPass] = useState(true);
   const [isBiometricSupported, setIsBiometricSupported] = React.useState(true);
 
   const { signIn, signOut, restoreToken } = useAuthDispatch();
@@ -34,7 +37,7 @@ const Login = ({ navigation: { navigate } }) => {
         <Stack m={24} spacing={12}>
           <Text variant="h5">Zaloguj się</Text>
           <TextInput
-            label="Adres e-mail"
+            label="Login"
             variant="standard"
             value={username}
             onChangeText={setUsername}
@@ -51,8 +54,20 @@ const Login = ({ navigation: { navigate } }) => {
             onChangeText={setPassword}
             keyboardType="default"
             onSubmitEditing={Keyboard.dismiss}
-            secureTextEntry
+            secureTextEntry={isPass}
             returnKeyType="next"
+            trailing={(props) => (
+              <IconButton
+                icon={(props) => (
+                  <Ionicons
+                    name={isPass ? "eye-outline" : "eye-off-outline"}
+                    {...props}
+                  />
+                )}
+                {...props}
+                onPress={() => setIsPass(!isPass)}
+              />
+            )}
           />
 
           <Button
