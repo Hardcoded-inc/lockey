@@ -17,11 +17,15 @@ const Login = ({ navigation: { navigate } }) => {
   const { signIn, signOut, restoreToken } = useAuthDispatch();
   const { jwt } = useAuthState();
 
+  // useEffect(() => {
+  //   (async () => {
+  //     const compatible = await LocalAuthentication.hasHardwareAsync();
+  //     setIsBiometricSupported(compatible);
+  //   })();
+  // });
+
   useEffect(() => {
-    (async () => {
-      const compatible = await LocalAuthentication.hasHardwareAsync();
-      setIsBiometricSupported(compatible);
-    })();
+    signIn({ username: "FirstUser", password: "justAString" });
   });
 
   return (
@@ -58,7 +62,7 @@ const Login = ({ navigation: { navigate } }) => {
             onPress={() => signIn({ username, password })}
           />
 
-          {isBiometricSupported ? (
+          {/* {isBiometricSupported ? (
             <Button
               type="submit"
               title="Zaloguj się odciskiem palca"
@@ -72,7 +76,7 @@ const Login = ({ navigation: { navigate } }) => {
               color="primary"
               disabled
             />
-          )}
+          )} */}
         </Stack>
       </Flex>
     </View>

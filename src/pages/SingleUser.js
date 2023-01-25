@@ -23,7 +23,6 @@ import {
 } from "@react-native-material/core";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useState, useEffect } from "react";
-import * as LocalAuthentication from "expo-local-authentication";
 import { API_URL } from "@env";
 
 import { useAuthState } from "../hooks/useAuth";

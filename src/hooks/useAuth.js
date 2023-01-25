@@ -55,12 +55,22 @@ function useAuth() {
           password,
         }),
       }).then((response) => {
-        const { jwt } = response.json();
+        if (response.status === 200) {
+          const cookie = response.headers.get("set-cookie");
+          let jwt = null;
+          if (cookie) jwt = cookie.slice(4);
 
-        dispatchJWT({
-          action: SIGN_IN,
-          payload: { jwt },
-        });
+          dispatchJWT({
+            action: SIGN_IN,
+            payload: { jwt },
+          });
+        } else if (response.status === 401) {
+          console.warn("STATUS", response.status);
+          console.warn("Wrong password");
+        } else if (response.status === 404) {
+          console.warn("STATUS", response.status);
+          console.warn("User does not exists");
+        }
       });
     },
     [dispatchJWT]
