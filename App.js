@@ -40,9 +40,9 @@ const App = () => {
     bootstrapAsync();
   }, []);
 
-  // if (isLoading) {
-  //   return <Splash />;
-  // }
+  if (isLoading) {
+    return <Splash />;
+  }
 
   return (
     <NavigationContainer>

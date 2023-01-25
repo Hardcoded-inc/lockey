@@ -88,15 +88,11 @@ function useAuth() {
 export function JWTProvider({ children }) {
   const { state, signIn, signOut, restoreToken } = useAuth();
 
-  console.log("3");
-
   const actions = {
     signIn,
     signOut,
     restoreToken,
   };
-
-  console.log("2", actions);
 
   return (
     <JWTStateContext.Provider value={state}>
