@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import React from "react";
 import { StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import { AppBar, Button } from "@react-native-material/core";
 
+import { useAuthDispatch, useAuthState } from "src/hooks/useAuth";
+
 const TopBar = () => {
-  const { signOut } = useContext(AuthContext);
+  const { signIn, signOut, restoreToken } = useAuthDispatch();
+  const jwt = useAuthState();
 
   return (
     <SafeAreaView style={styles.container}>

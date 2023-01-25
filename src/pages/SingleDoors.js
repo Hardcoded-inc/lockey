@@ -19,6 +19,7 @@ import { useState, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
 import { API_URL } from "@env";
 import * as Location from "expo-location";
+import { useAuthState } from "src/hooks/useAuth";
 
 const SingleDoors = ({ route, navigation }) => {
   const { id } = route.params;
@@ -32,10 +33,16 @@ const SingleDoors = ({ route, navigation }) => {
   const [doorPermission, setDoorPermission] = useState(true);
   const [isLocationMatched, setIsLocationMatched] = useState(false);
 
+  const jwt = useAuthState();
+
   useEffect(() => {
     const fetchDoors = async () => {
       try {
-        const res = await fetch(API_URL + "/doors/" + id);
+        const res = await fetch(API_URL + "/doors/" + id, {
+          headers: {
+            Bareer: jwt,
+          },
+        });
         const json = await res.json();
         setSingleDoors(json);
         setSingleDoorsStatus(json.is_open);
@@ -103,6 +110,9 @@ const SingleDoors = ({ route, navigation }) => {
     try {
       res = await fetch(API_URL + "/doors/" + id + "/open", {
         method: "POST",
+        headers: {
+          Bareer: jwt,
+        },
       });
     } catch (e) {
       console.log(e);

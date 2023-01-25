@@ -9,16 +9,20 @@ import {
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "@env";
+import { useAuthState } from "src/hooks/useAuth";
 
 const SingleUser = ({ route, navigation }) => {
   const [login, setLogin] = useState(null);
   const [pass, setPass] = useState(null);
+
+  const jwt = useAuthState();
 
   const createAccount = async () => {
     const options = {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Bareer: jwt,
       },
       method: "POST",
       body: JSON.stringify({

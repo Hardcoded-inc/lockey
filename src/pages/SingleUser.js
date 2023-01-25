@@ -26,6 +26,8 @@ import { useState, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
 import { API_URL } from "@env";
 
+import { useAuthState } from "src/hooks/useAuth";
+
 const SingleUser = ({ route, navigation }) => {
   const { id } = route.params;
 
@@ -40,10 +42,18 @@ const SingleUser = ({ route, navigation }) => {
   const [userDoors, setUserDoors] = useState();
   const [isUserDoors, setIsUserDoors] = useState(false);
 
+  const jwt = useAuthState();
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(API_URL + "/users/" + id + "/available_doors");
+
+        const res = await fetch(API_URL + "/users/" + id + "/available_doors", {
+          headers: {
+            Bareer: jwt,
+          },
+        });
+
         const json = await res.json();
         setUser(json);
       } catch (e) {
@@ -86,6 +96,7 @@ const SingleUser = ({ route, navigation }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Bareer: jwt,
       },
       method: "POST",
       body: JSON.stringify({ user_id: userId, door_id: doorId }),
@@ -109,6 +120,7 @@ const SingleUser = ({ route, navigation }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Bareer: jwt,
       },
       method: "POST",
       body: JSON.stringify({ user_id: userId, door_id: doorId }),
