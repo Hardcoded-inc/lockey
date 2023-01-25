@@ -1,5 +1,4 @@
 import React, { useState, createRef, useContext, useEffect } from "react";
-
 import { View, Keyboard } from "react-native";
 import {
   TextInput,
@@ -74,13 +73,6 @@ const Login = ({ navigation: { navigate } }) => {
               disabled
             />
           )}
-          <Button
-            type="submit"
-            variant="outlined"
-            title="Zarejestruj się"
-            color="primary"
-            onPress={() => navigate("Register")}
-          />
         </Stack>
       </Flex>
     </View>

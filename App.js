@@ -6,7 +6,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Navigation from "./src/pages/Navigation";
 import Login from "./src/pages/Login";
-import Register from "./src/pages/Register";
 import Splash from "./src/pages/Splash";
 
 import { useAuthDispatch, useAuthState } from "src/hooks/useAuth";
@@ -53,20 +52,15 @@ const App = () => {
                 headerShown: false,
               }}
             />
-            <Stack.Screen
-              name="Register"
-              component={Register}
-              options={{
-                headerShown: false,
-              }}
-            />
           </>
         ) : (
-          <Stack.Screen
-            name="Navigation"
-            component={Navigation}
-            options={{ headerShown: false }}
-          />
+          <>
+            <Stack.Screen
+              name="Navigation"
+              component={Navigation}
+              options={{ headerShown: false }}
+            />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
