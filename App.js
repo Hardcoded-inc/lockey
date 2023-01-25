@@ -8,12 +8,17 @@ import Navigation from "./src/pages/Navigation";
 import Login from "./src/pages/Login";
 import Splash from "./src/pages/Splash";
 
-import { useAuthDispatch, useAuthState } from "./src/hooks/useAuth";
+import {
+  useAuthDispatch,
+  useAuthState,
+  JWTProvider,
+} from "./src/hooks/useAuth";
 
-const App = () => {
+const AppInner = () => {
   const Stack = createStackNavigator();
 
-  const { restoreToken } = useAuthDispatch();
+  const dupa = useAuthDispatch();
+  console.log("1", dupa);
   const jwt = useAuthState();
 
   useEffect(() => {
@@ -65,6 +70,12 @@ const App = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
+};
+
+const App = () => {
+  <JWTProvider>
+    <AppInner />
+  </JWTProvider>;
 };
 
 export default App;

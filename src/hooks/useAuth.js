@@ -72,12 +72,15 @@ function useAuth() {
     });
   }, [dispatchJWT]);
 
-  const restoreToken = useCallback(() => {
-    dispatchJWT({
-      action: RESTORE_TOKEN,
-      payload: { jwt },
-    });
-  }, [dispatchJWT]);
+  const restoreToken = useCallback(
+    (jwt) => {
+      dispatchJWT({
+        action: RESTORE_TOKEN,
+        payload: { jwt },
+      });
+    },
+    [dispatchJWT]
+  );
 
   return { jwt, signIn, signOut, restoreToken };
 }
@@ -85,11 +88,15 @@ function useAuth() {
 export function JWTProvider({ children }) {
   const { jwt, signIn, signOut, restoreToken } = useAuth();
 
+  console.log("3");
+
   const actions = {
     signIn,
     signOut,
     restoreToken,
   };
+
+  console.log("2", actions);
 
   return (
     <JWTStateContext.Provider value={jwt}>
