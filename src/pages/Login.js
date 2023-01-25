@@ -1,5 +1,4 @@
 import React, { useState, createRef, useContext, useEffect } from "react";
-import { AuthContext } from "../components/AuthContext";
 
 import { View, Keyboard } from "react-native";
 import {
@@ -9,13 +8,15 @@ import {
   Flex,
   Button,
 } from "@react-native-material/core";
+import { useAuthDispatch, useAuthState } from "src/hooks/useAuth";
 
 const Login = ({ navigation: { navigate } }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isBiometricSupported, setIsBiometricSupported] = React.useState(true);
 
-  const { signIn } = useContext(AuthContext);
+  const { signIn, signOut, restoreToken } = useAuthDispatch();
+  const jwt = useAuthState();
 
   useEffect(() => {
     (async () => {
