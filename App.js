@@ -8,7 +8,7 @@ import Navigation from "./src/pages/Navigation";
 import Login from "./src/pages/Login";
 import Splash from "./src/pages/Splash";
 
-import { useAuthDispatch, useAuthState } from "src/hooks/useAuth";
+import { useAuthDispatch, useAuthState } from "./src/hooks/useAuth";
 
 const App = () => {
   const Stack = createStackNavigator();

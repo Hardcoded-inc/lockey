@@ -1,3 +1,4 @@
+import { API_URL } from "@env";
 import React, { useReducer, useContext, useCallback } from "react";
 
 export const JWTStateContext = React.createContext();
@@ -41,7 +42,7 @@ function useAuth() {
 
   const signIn = useCallback(
     ({ username, password }) => {
-      const url = "https://lockeybackend.azurewebsites.net/api/login";
+      const url = API_URL + "/login";
 
       fetch(url, {
         method: "POST",

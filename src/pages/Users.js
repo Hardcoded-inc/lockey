@@ -8,7 +8,7 @@ import {
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "@env";
-import { useAuthState } from "src/hooks/useAuth";
+import { useAuthState } from "../hooks/useAuth";
 
 export const Doors = ({ navigation }) => {
   const [users, setUsers] = useState();

@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import { AppBar, Button } from "@react-native-material/core";
 
-import { useAuthDispatch, useAuthState } from "src/hooks/useAuth";
+import { useAuthDispatch, useAuthState } from "../hooks/useAuth";
 
 const TopBar = () => {
   const { signIn, signOut, restoreToken } = useAuthDispatch();

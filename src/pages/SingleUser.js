@@ -26,7 +26,7 @@ import { useState, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
 import { API_URL } from "@env";
 
-import { useAuthState } from "src/hooks/useAuth";
+import { useAuthState } from "../hooks/useAuth";
 
 const SingleUser = ({ route, navigation }) => {
   const { id } = route.params;

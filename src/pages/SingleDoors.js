@@ -19,7 +19,7 @@ import { useState, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
 import { API_URL } from "@env";
 import * as Location from "expo-location";
-import { useAuthState } from "src/hooks/useAuth";
+import { useAuthState } from "../hooks/useAuth";
 
 const SingleDoors = ({ route, navigation }) => {
   const { id } = route.params;

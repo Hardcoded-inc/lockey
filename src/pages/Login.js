@@ -7,7 +7,7 @@ import {
   Flex,
   Button,
 } from "@react-native-material/core";
-import { useAuthDispatch, useAuthState } from "src/hooks/useAuth";
+import { useAuthDispatch, useAuthState } from "../hooks/useAuth";
 
 const Login = ({ navigation: { navigate } }) => {
   const [username, setUsername] = useState("");
