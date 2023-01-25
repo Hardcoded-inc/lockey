@@ -9,15 +9,18 @@ import {
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "@env";
+import { useAuthState } from "../hooks/useAuth";
 
 const SingleUser = ({ route, navigation }) => {
   const [name, setName] = useState(null);
+  const jwt = useAuthState();
 
   const createDoors = async () => {
     const options = {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Bareer: jwt,
       },
       method: "POST",
       body: JSON.stringify({

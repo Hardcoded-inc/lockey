@@ -26,6 +26,8 @@ import { useState, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
 import { API_URL } from "@env";
 
+import { useAuthState } from "src/hooks/useAuth";
+
 const SingleUser = ({ route, navigation }) => {
   const { id } = route.params;
 
@@ -42,10 +44,16 @@ const SingleUser = ({ route, navigation }) => {
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [flag, setFlag] = useState();
 
+  const jwt = useAuthState();
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(API_URL + "/users/" + id);
+        const res = await fetch(API_URL + "/users/" + id, {
+          headers: {
+            Bareer: jwt,
+          },
+        });
         const json = await res.json();
         setUser(json);
       } catch (e) {
@@ -56,23 +64,7 @@ const SingleUser = ({ route, navigation }) => {
       }
     };
 
-    //TODO: fetch all user doors
-    const fetchDoors = async () => {
-      try {
-        const res = await fetch(API_URL + "/doors/1");
-        const json = await res.json();
-        setDoors(json);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setIsLoading(false);
-        console.log(doors);
-      }
-    };
-
     fetchUser();
-
-    //fetchDoors();
   }, [flag]);
 
   const activateDialog = (id, type) => {
@@ -97,6 +89,7 @@ const SingleUser = ({ route, navigation }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Bareer: jwt,
       },
       method: "POST",
       body: JSON.stringify({ user_id: userId, door_id: doorId }),
@@ -120,6 +113,7 @@ const SingleUser = ({ route, navigation }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Bareer: jwt,
       },
       method: "POST",
       body: JSON.stringify({ user_id: userId, door_id: doorId }),

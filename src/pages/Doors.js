@@ -8,16 +8,22 @@ import {
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "@env";
+import { useAuthState } from "src/hooks/useAuth";
 
 export const Doors = ({ navigation }) => {
   const [doors, setDoors] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(true);
+  const jwt = useAuthState();
 
   useEffect(() => {
     const fetchDoors = async () => {
       try {
-        const res = await fetch(API_URL + "/doors");
+        const res = await fetch(API_URL + "/doors", {
+          headers: {
+            Bareer: jwt,
+          },
+        });
         const json = await res.json();
         setDoors(json);
       } catch (e) {
