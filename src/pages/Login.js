@@ -28,6 +28,7 @@ const Login = ({ navigation: { navigate } }) => {
   // });
 
   useEffect(() => {
+    // TODO: Remove for demo
     signIn({ username: "FirstUser", password: "justAString" });
   });
 

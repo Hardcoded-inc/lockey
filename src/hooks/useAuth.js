@@ -1,4 +1,4 @@
-import { API_URL } from "@env";
+import { API_URL } from "../vars.js";
 import React, { useReducer, useContext, useCallback } from "react";
 
 export const JWTStateContext = React.createContext();

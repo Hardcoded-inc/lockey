@@ -17,7 +17,7 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useState, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
-import { API_URL } from "@env";
+import { API_URL } from "../vars.js";
 import * as Location from "expo-location";
 import { useAuthState } from "../hooks/useAuth";
 
