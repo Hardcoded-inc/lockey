@@ -13,7 +13,7 @@ import { useAuthState } from "../hooks/useAuth";
 export const Doors = ({ navigation }) => {
   const [users, setUsers] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const jwt = useAuthState();
+  const { jwt } = useAuthState();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -25,7 +25,6 @@ export const Doors = ({ navigation }) => {
         });
         const json = await res.json();
         setUsers(json);
-
       } catch (e) {
         console.log(e);
       } finally {

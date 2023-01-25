@@ -8,25 +8,25 @@ const RESTORE_TOKEN = "RESTORE_TOKEN";
 const SIGN_IN = "SIGN_IN";
 const SIGN_OUT = "SIGN_OUT";
 
-const reducer = (jwt, { action, payload }) => {
+const reducer = (prevState, { action, payload }) => {
   switch (action) {
     case RESTORE_TOKEN:
       return {
         ...prevState,
-        userToken: payload.jwt,
+        jwt: payload.jwt,
         isLoading: false,
       };
     case SIGN_IN:
       return {
         ...prevState,
         isSignout: false,
-        userToken: payload.jwt,
+        jwt: payload.jwt,
       };
     case SIGN_OUT:
       return {
         ...prevState,
         isSignout: true,
-        userToken: null,
+        jwt: null,
       };
   }
 };
@@ -34,10 +34,10 @@ const reducer = (jwt, { action, payload }) => {
 export default reducer;
 
 function useAuth() {
-  const [jwt, dispatchJWT] = useReducer(reducer, {
+  const [state, dispatchJWT] = useReducer(reducer, {
     isLoading: true,
     isSignout: false,
-    userToken: null,
+    jwt: null,
   });
 
   const signIn = useCallback(
@@ -82,11 +82,11 @@ function useAuth() {
     [dispatchJWT]
   );
 
-  return { jwt, signIn, signOut, restoreToken };
+  return { state, signIn, signOut, restoreToken };
 }
 
 export function JWTProvider({ children }) {
-  const { jwt, signIn, signOut, restoreToken } = useAuth();
+  const { state, signIn, signOut, restoreToken } = useAuth();
 
   console.log("3");
 
@@ -99,7 +99,7 @@ export function JWTProvider({ children }) {
   console.log("2", actions);
 
   return (
-    <JWTStateContext.Provider value={jwt}>
+    <JWTStateContext.Provider value={state}>
       <JWTDispatchContext.Provider value={actions}>
         {children}
       </JWTDispatchContext.Provider>

@@ -42,12 +42,11 @@ const SingleUser = ({ route, navigation }) => {
   const [userDoors, setUserDoors] = useState();
   const [isUserDoors, setIsUserDoors] = useState(false);
 
-  const jwt = useAuthState();
+  const { jwt } = useAuthState();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-
         const res = await fetch(API_URL + "/users/" + id + "/available_doors", {
           headers: {
             Bareer: jwt,

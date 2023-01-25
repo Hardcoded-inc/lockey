@@ -16,8 +16,8 @@ import {
 const App = () => {
   const Stack = createStackNavigator();
 
-  const dupa = useAuthDispatch();
-  const jwt = useAuthState();
+  const { restoreToken } = useAuthDispatch();
+  const { isLoading, jwt } = useAuthState();
 
   useEffect(() => {
     const bootstrapAsync = async () => {
@@ -39,33 +39,41 @@ const App = () => {
     bootstrapAsync();
   }, []);
 
+  // if (isLoading) {
+  //   return <Splash />;
+  // }
+
   return (
-    <JWTProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          {jwt == null ? (
-            <>
-              <Stack.Screen
-                name="SignIn"
-                component={Login}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <Stack.Screen
-                name="Navigation"
-                component={Navigation}
-                options={{ headerShown: false }}
-              />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </JWTProvider>
+    <NavigationContainer>
+      <Stack.Navigator>
+        {jwt == null ? (
+          <>
+            <Stack.Screen
+              name="SignIn"
+              component={Login}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Navigation"
+              component={Navigation}
+              options={{ headerShown: false }}
+            />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
-export default App;
+const AppWrapper = () => (
+  <JWTProvider>
+    <App />
+  </JWTProvider>
+);
+
+export default AppWrapper;

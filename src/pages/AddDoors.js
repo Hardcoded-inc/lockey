@@ -12,7 +12,6 @@ import { API_URL } from "@env";
 import * as Location from "expo-location";
 import { useAuthState } from "../hooks/useAuth";
 
-
 const AddDoors = ({ route, navigation }) => {
   const [name, setName] = useState(null);
   const [long, setLong] = useState(null);
@@ -48,8 +47,7 @@ const AddDoors = ({ route, navigation }) => {
   }, [isLocation]);
 
   console.log(isLocation);
-  const jwt = useAuthState();
-
+  const { jwt } = useAuthState();
 
   const createDoors = async () => {
     const options = {

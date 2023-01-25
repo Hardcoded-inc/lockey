@@ -14,7 +14,7 @@ export const Doors = ({ navigation }) => {
   const [doors, setDoors] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(true);
-  const jwt = useAuthState();
+  const { jwt } = useAuthState();
 
   useEffect(() => {
     const fetchDoors = async () => {
