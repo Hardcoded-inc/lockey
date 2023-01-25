@@ -26,7 +26,7 @@ const Login = ({ navigation: { navigate } }) => {
         <Stack m={24} spacing={12}>
           <Text variant="h5">Zaloguj się</Text>
           <TextInput
-            label="Adres e-mail"
+            label="Login"
             variant="standard"
             value={username}
             onChangeText={setUsername}
