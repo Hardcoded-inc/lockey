@@ -8,7 +8,7 @@ import {
   Flex,
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
-import { API_URL } from "@env";
+import { API_URL } from "../vars.js";
 import * as Location from "expo-location";
 import { useAuthState } from "../hooks/useAuth";
 

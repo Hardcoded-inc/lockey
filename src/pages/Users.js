@@ -7,7 +7,7 @@ import {
   Button,
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
-import { API_URL } from "@env";
+import { API_URL } from "../vars.js";
 import { useAuthState } from "../hooks/useAuth";
 
 export const Doors = ({ navigation }) => {
