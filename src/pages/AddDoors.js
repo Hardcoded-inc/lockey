@@ -9,11 +9,47 @@ import {
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "@env";
+import * as Location from "expo-location";
 import { useAuthState } from "../hooks/useAuth";
 
-const SingleUser = ({ route, navigation }) => {
+
+const AddDoors = ({ route, navigation }) => {
   const [name, setName] = useState(null);
+  const [long, setLong] = useState(null);
+  const [lat, setLat] = useState(null);
+  const [location, setLocation] = useState();
+  const [isLocation, setIsLocation] = useState(false);
+
+  useEffect(() => {
+    const checkLocalisation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      try {
+        const res = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Low,
+        });
+        setLocation(res);
+        console.log("location" + res);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setIsLocation(true);
+        setLong(String(location.coords.longitude));
+        setLat(String(location.coords.latitude));
+      }
+    };
+
+    checkLocalisation();
+  }, [isLocation]);
+
+  console.log(isLocation);
   const jwt = useAuthState();
+
 
   const createDoors = async () => {
     const options = {
@@ -24,7 +60,7 @@ const SingleUser = ({ route, navigation }) => {
       },
       method: "POST",
       body: JSON.stringify({
-        user: { name: name },
+        door: { name: name, long: long, lat: lat },
       }),
     };
 
@@ -62,7 +98,29 @@ const SingleUser = ({ route, navigation }) => {
             blurOnSubmit={false}
           />
 
-          {name === null ? (
+          <TextInput
+            label="Długość geograficzna"
+            variant="standard"
+            value={long}
+            onChangeText={setLong}
+            autoCapitalize="none"
+            keyboardType="text"
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
+
+          <TextInput
+            label="Szerokość geograficzna"
+            variant="standard"
+            value={lat}
+            onChangeText={setLat}
+            autoCapitalize="none"
+            keyboardType="text"
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
+
+          {name === null || lat === null || long === null ? (
             <Button
               disabled
               title="Stwórz drzwi"
@@ -77,7 +135,7 @@ const SingleUser = ({ route, navigation }) => {
   );
 };
 
-export default SingleUser;
+export default AddDoors;
 
 const styles = StyleSheet.create({
   outer: {

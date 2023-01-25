@@ -80,19 +80,6 @@ const SingleDoors = ({ route, navigation }) => {
         console.log(e);
       } finally {
         setIsLocation(true);
-
-        const phone_lat = 2;
-        const phone_long = 3;
-
-        //to do - replace with data from db
-        const doors_lat = 2;
-        const doors_long = 3;
-
-        if (phone_lat === doors_lat && phone_long === doors_long) {
-          setIsLocationMatched(true);
-        } else {
-          setIsLocationMatched(false);
-        }
       }
     };
 
@@ -100,6 +87,23 @@ const SingleDoors = ({ route, navigation }) => {
     isBiometricsAvailable();
     checkLocalisation();
   }, []);
+
+  useEffect(() => {
+    if (isLocation === true) {
+      const phone_lat = location.coords.latitude.toFixed(2);
+      const phone_long = location.coords.longitude.toFixed(2);
+
+      //to do - replace with data from db
+      const doors_lat = singleDoors.lat.toFixed(2);
+      const doors_long = singleDoors.long.toFixed(2);
+
+      if (phone_lat === doors_lat && phone_long === doors_long) {
+        setIsLocationMatched(true);
+      } else {
+        setIsLocationMatched(false);
+      }
+    }
+  }, [isLocation]);
 
   const callDoorsAPI = async () => {
     let res = null;
@@ -230,9 +234,21 @@ const SingleDoors = ({ route, navigation }) => {
 
             <Flex>
               <Text variant="overline">LOKALIZACJA DRZWI</Text>
-              <Text variant="h5">47.81 x 19.06</Text>
+              <Text variant="h5">
+                {singleDoors.long.toFixed(2)}x{singleDoors.lat.toFixed(2)}
+              </Text>
             </Flex>
-
+            <Flex>
+              <Text variant="overline">TWOJA LOKALIZACJA</Text>
+              {isLocation ? (
+                <Text variant="h5">
+                  {location.coords.longitude.toFixed(2)}x
+                  {location.coords.latitude.toFixed(2)}
+                </Text>
+              ) : (
+                <></>
+              )}
+            </Flex>
             <Flex>
               <Text variant="overline">DOSTĘP DO DRZWI</Text>
               <Flex direction="row" alignItems="center">
