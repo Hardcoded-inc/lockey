@@ -16,14 +16,16 @@ export const Doors = ({ navigation }) => {
   const jwt = useAuthState();
 
   useEffect(() => {
-    const fetchDoors = async () => {
+    const fetchUsers = async () => {
       try {
         const res = await fetch(API_URL + "/users", {
           headers: {
             Bareer: jwt,
           },
         });
-        setUsers(res);
+        const json = await res.json();
+        setUsers(json);
+
       } catch (e) {
         console.log(e);
       } finally {
@@ -31,7 +33,7 @@ export const Doors = ({ navigation }) => {
       }
     };
 
-    fetchDoors();
+    fetchUsers();
   }, [users]);
 
   return (
@@ -49,13 +51,13 @@ export const Doors = ({ navigation }) => {
           <ScrollView style={{ marginBottom: 120 }} horizontal="true">
             {users.map((user) => (
               <ListItem
-                key={user.ID}
+                key={user.id}
                 title={user.username}
-                id={"user_" + user.ID}
+                id={"user_" + user.id}
                 onPress={() => {
                   navigation.navigate("SingleUser", {
                     title: user.username,
-                    id: user.ID,
+                    id: user.id,
                   });
                 }}
               />
