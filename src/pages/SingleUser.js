@@ -33,13 +33,14 @@ const SingleUser = ({ route, navigation }) => {
   const [user, setUser] = useState();
   const [doorId, setDoorId] = useState();
   const [pickedDoor, setPickedDoor] = useState();
-  const [userId, setUserId] = useState();
+  const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [visible, setVisible] = useState(false);
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [flag, setFlag] = useState();
-  const [userDoors, setUserDoors] = useState();
-  const [isUserDoors, setIsUserDoors] = useState(false);
+  const [availableDoors, setAvailableDoors] = useState();
+  const [userDoors, setUserDoors] = useState(null);
 
   const { jwt } = useAuthState();
 
@@ -51,26 +52,41 @@ const SingleUser = ({ route, navigation }) => {
             Bareer: jwt,
           },
         });
-
         const json = await res.json();
         setUser(json);
+        setAvailableDoors(json.available_doors);
+        setUserId(json.ID);
+        console.log(json);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    const fetchDoors = async () => {
+      try {
+        const res = await fetch(API_URL + "/users/" + id, {
+          headers: {
+            Bareer: jwt,
+          },
+        });
+        const json = await res.json();
+        if (json.doors.length > 0) {
+          setUserDoors(json.doors);
+        } else {
+          setUserDoors(null);
+        }
       } catch (e) {
         console.log(e);
       } finally {
         setIsLoading(false);
-        setUserId(user.ID);
       }
     };
 
     fetchUser();
+    fetchDoors();
   }, [flag]);
-
-  useEffect(() => {
-    if (setIsLoading === false) {
-      setUserDoors(user.available_doors);
-      setIsUserDoors(true);
-    }
-  }, [user]);
 
   const activateDialog = (id, type) => {
     switch (type) {
@@ -126,7 +142,7 @@ const SingleUser = ({ route, navigation }) => {
 
     let res = null;
     try {
-      res = await fetch(API_URL + "/users/attach_door", options);
+      res = await fetch(API_URL + "/users/assign_door", options);
     } catch (e) {
       console.log(e);
     } finally {
@@ -142,6 +158,8 @@ const SingleUser = ({ route, navigation }) => {
       <View style={styles.inner}>
         {isLoading ? (
           <ActivityIndicator size="large" color="#00ff00" />
+        ) : isLoadingUser ? (
+          <></>
         ) : (
           <>
             <Stack m={12} spacing={24} display={"flex"}>
@@ -152,7 +170,7 @@ const SingleUser = ({ route, navigation }) => {
 
               <Flex>
                 <Text variant="overline">TYP UPRAWNIEŃ</Text>
-                {!user[2] ? (
+                {user.is_admin ? (
                   <Text variant="h5">Administrator</Text>
                 ) : (
                   <Text variant="h5">Użytkownik</Text>
@@ -163,17 +181,17 @@ const SingleUser = ({ route, navigation }) => {
                 <Text variant="overline">
                   DOSTĘP DO DRZWI (NACIŚNIJ BY USUNĄĆ)
                 </Text>
-                {isUserDoors ? (
+                {userDoors === null ? (
+                  <></>
+                ) : (
                   userDoors.map((door) => (
                     <ListItem
                       key={door.ID}
                       title={door.name}
                       id={"door_" + door.ID}
-                      onPress={() => activateDialog(id, "detach")}
+                      onPress={() => activateDialog(door.ID, "detach")}
                     />
                   ))
-                ) : (
-                  <></>
                 )}
               </Flex>
 
@@ -186,73 +204,89 @@ const SingleUser = ({ route, navigation }) => {
             </Stack>
           </>
         )}
-        <Provider>
-          <Dialog visible={visible} onDismiss={() => setVisible(false)}>
-            <DialogHeader title="Edycja uprawnień" />
-            <DialogContent>
-              <Text>
-                Możesz odebrać użytkownikowi uprawnienia do otwierania drzwi
-              </Text>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                title="Anuluj"
-                compact
-                variant="text"
-                onPress={() => setVisible(false)}
-              />
-              <Button
-                title="Usuń"
-                compact
-                variant="text"
-                onPress={() => detachUserFromDoors()}
-              />
-            </DialogActions>
-          </Dialog>
-        </Provider>
-        <Provider>
-          <Dialog
-            style={{}}
-            visible={visibleAdd}
-            onDismiss={() => setVisibleAdd(false)}
-          >
-            <DialogHeader title="Edycja uprawnień" />
-            <DialogContent>
-              <Text>
-                Możesz dodać użytkownikowi uprawnienia do otwierania drzwi. W
-                tym celu wybierz drzwi, a następnie zatwierdź
-              </Text>
-            </DialogContent>
-            <DialogContent>
-              <Stack spacing={2}>
-                <Text>Wybierz jedne z dostępnych dla użytkownika drzwi</Text>
-                <Text>Wybrane drzwi: {pickedDoor}</Text>
-                {/* {userDoors.map((door) => (
-                  <ListItem
-                    key={door.ID}
-                    title={door.name}
-                    id={"door_" + door.ID}
-                    onPress={() => setPickedDoor(door.username)}
+        {!isLoading && !isLoadingUser ? (
+          <>
+            <Provider>
+              <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+                <DialogHeader title="Edycja uprawnień" />
+                <DialogContent>
+                  <Text>
+                    Możesz odebrać użytkownikowi uprawnienia do otwierania drzwi
+                  </Text>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    title="Anuluj"
+                    compact
+                    variant="text"
+                    onPress={() => setVisible(false)}
                   />
-                ))} */}
-              </Stack>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                title="Anuluj"
-                compact
-                variant="text"
-                onPress={() => setVisibleAdd(false)}
-              />
-              <Button
-                title="Dodaj"
-                compact
-                variant="text"
-                onPress={() => attachUserToDoors()}
-              />
-            </DialogActions>
-          </Dialog>
-        </Provider>
+                  <Button
+                    title="Usuń"
+                    compact
+                    variant="text"
+                    onPress={() => detachUserFromDoors()}
+                  />
+                </DialogActions>
+              </Dialog>
+            </Provider>
+            <Provider>
+              <Dialog
+                style={{}}
+                visible={visibleAdd}
+                onDismiss={() => setVisibleAdd(false)}
+              >
+                <DialogHeader title="Edycja uprawnień" />
+                <DialogContent>
+                  <Text>
+                    Możesz dodać użytkownikowi uprawnienia do otwierania drzwi.
+                    W tym celu wybierz drzwi, a następnie zatwierdź
+                  </Text>
+                </DialogContent>
+                <DialogContent>
+                  <Stack spacing={2}>
+                    <Text>
+                      Wybierz jedne z dostępnych dla użytkownika drzwi
+                    </Text>
+                    <Text>Wybrane drzwi: {pickedDoor}</Text>
+                    <ScrollView
+                      style={{ marginBottom: 10, maxHeight: 200 }}
+                      horizontal="true"
+                    >
+                      {availableDoors.map((door) => (
+                        <ListItem
+                          key={door.ID}
+                          title={door.name}
+                          id={"door_" + door.ID}
+                          onPress={() => {
+                            setPickedDoor(door.name);
+                            setDoorId(door.ID);
+                          }}
+                        />
+                      ))}
+                    </ScrollView>
+                  </Stack>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    title="Anuluj"
+                    compact
+                    variant="text"
+                    onPress={() => setVisibleAdd(false)}
+                  />
+                  <Button
+                    title="Dodaj"
+                    compact
+                    variant="text"
+                    onPress={() => attachUserToDoors()}
+                  />
+                </DialogActions>
+              </Dialog>
+            </Provider>
+          </>
+        ) : (
+          <></>
+        )}
       </View>
     </ScrollView>
   );
