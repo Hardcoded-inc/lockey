@@ -6,23 +6,19 @@ import {
   Text,
   Flex,
   Button,
+  IconButton,
 } from "@react-native-material/core";
 import { useAuthDispatch, useAuthState } from "../hooks/useAuth";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Login = ({ navigation: { navigate } }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isPass, setIsPass] = useState(true);
   const [isBiometricSupported, setIsBiometricSupported] = React.useState(true);
 
   const { signIn, signOut, restoreToken } = useAuthDispatch();
   const jwt = useAuthState();
-
-  useEffect(() => {
-    (async () => {
-      const compatible = await LocalAuthentication.hasHardwareAsync();
-      setIsBiometricSupported(compatible);
-    })();
-  });
 
   return (
     <View>
@@ -47,8 +43,20 @@ const Login = ({ navigation: { navigate } }) => {
             onChangeText={setPassword}
             keyboardType="default"
             onSubmitEditing={Keyboard.dismiss}
-            secureTextEntry
+            secureTextEntry={isPass}
             returnKeyType="next"
+            trailing={(props) => (
+              <IconButton
+                icon={(props) => (
+                  <Ionicons
+                    name={isPass ? "eye-outline" : "eye-off-outline"}
+                    {...props}
+                  />
+                )}
+                {...props}
+                onPress={() => setIsPass(!isPass)}
+              />
+            )}
           />
 
           <Button
@@ -57,22 +65,6 @@ const Login = ({ navigation: { navigate } }) => {
             color="primary"
             onPress={() => signIn({ username, password })}
           />
-
-          {isBiometricSupported ? (
-            <Button
-              type="submit"
-              title="Zaloguj się odciskiem palca"
-              color="primary"
-              onPress={() => signIn({ username, password })}
-            />
-          ) : (
-            <Button
-              type="submit"
-              title="Zaloguj się odciskiem palca"
-              color="primary"
-              disabled
-            />
-          )}
         </Stack>
       </Flex>
     </View>

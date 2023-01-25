@@ -6,7 +6,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Navigation from "./src/pages/Navigation";
 import Login from "./src/pages/Login";
-import Splash from "./src/pages/Splash";
 
 import {
   useAuthDispatch,
@@ -14,11 +13,10 @@ import {
   JWTProvider,
 } from "./src/hooks/useAuth";
 
-const AppInner = () => {
+const App = () => {
   const Stack = createStackNavigator();
 
   const dupa = useAuthDispatch();
-  console.log("1", dupa);
   const jwt = useAuthState();
 
   useEffect(() => {
@@ -41,41 +39,33 @@ const AppInner = () => {
     bootstrapAsync();
   }, []);
 
-  if (state.isLoading) {
-    return <Splash />;
-  }
-
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {jwt == null ? (
-          <>
-            <Stack.Screen
-              name="SignIn"
-              component={Login}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen
-              name="Navigation"
-              component={Navigation}
-              options={{ headerShown: false }}
-            />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <JWTProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {jwt == null ? (
+            <>
+              <Stack.Screen
+                name="SignIn"
+                component={Login}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Navigation"
+                component={Navigation}
+                options={{ headerShown: false }}
+              />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </JWTProvider>
   );
-};
-
-const App = () => {
-  <JWTProvider>
-    <AppInner />
-  </JWTProvider>;
 };
 
 export default App;
