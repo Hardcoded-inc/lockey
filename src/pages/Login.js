@@ -17,6 +17,7 @@ const Login = ({ navigation: { navigate } }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPass, setIsPass] = useState(true);
+  const [error, setError] = useState(true);
   const [isBiometricSupported, setIsBiometricSupported] = React.useState(true);
 
   const { signIn, signOut, restoreToken } = useAuthDispatch();
@@ -46,18 +47,32 @@ const Login = ({ navigation: { navigate } }) => {
       const savedUsername = await SecureStore.getItemAsync("username");
       const savedPassword = await SecureStore.getItemAsync("password");
 
+      if (!savedUsername) {
+        setError("No credentials saved. Log in with username and password!");
+        return;
+      }
+
       setUsername(savedUsername);
       setPassword(savedPassword);
 
-      signIn({ username: savedUsername, password: savedPassword });
+      const { errorMessage, success } = await signIn({
+        username: savedUsername,
+        password: savedPassword,
+      });
+      console.warn(errorMessage);
+      if (!success && errorMessage) setError(errorMessage);
     }
   };
 
   const signInAndSaveCredentials = async () => {
-    await SecureStore.setItemAsync("username", username);
-    await SecureStore.setItemAsync("password", password);
+    const { errorMessage, success } = await signIn({ username, password });
 
-    signIn({ username, password });
+    if (success) {
+      await SecureStore.setItemAsync("username", username);
+      await SecureStore.setItemAsync("password", password);
+    } else if (errorMessage) {
+      setError(errorMessage);
+    }
   };
 
   // -------------------
@@ -109,6 +124,12 @@ const Login = ({ navigation: { navigate } }) => {
               />
             )}
           />
+
+          {error && (
+            <Text variant="caption" color="red">
+              {error}
+            </Text>
+          )}
 
           <Button
             type="submit"
