@@ -1,4 +1,5 @@
 import React, { useState, createRef, useContext, useEffect } from "react";
+import * as LocalAuthentication from "expo-local-authentication";
 import { View, Keyboard } from "react-native";
 import {
   TextInput,
@@ -20,17 +21,46 @@ const Login = ({ navigation: { navigate } }) => {
   const { signIn, signOut, restoreToken } = useAuthDispatch();
   const { jwt } = useAuthState();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const compatible = await LocalAuthentication.hasHardwareAsync();
-  //     setIsBiometricSupported(compatible);
-  //   })();
-  // });
-
   useEffect(() => {
-    // TODO: Remove for demo
-    signIn({ username: "FirstUser", password: "justAString" });
-  });
+    const checkBiometricsAvailability = async () => {
+      try {
+        const compatible = await LocalAuthentication.hasHardwareAsync();
+        setIsBiometricSupported(compatible);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    checkBiometricsAvailability();
+  }, []);
+
+  const biometrySignIn = async () => {
+    LocalAuthentication.authenticateAsync({
+      promptMessage: "dupa",
+      cancelLabel: "cancel",
+      disableDeviceFallback: true,
+    }).then((res) => {
+      // console.log(res);
+      // LOG  {"error": "user_cancel", "success": false, "warning": "cancel"}
+      // LOG  {"success": true}
+
+      if (res.success) {
+        console.log("yeah!");
+      }
+      // () => signIn({ username, password })
+    });
+  };
+
+  // -------------------
+  //     AUTO LOGIN
+  //   Remove for demo
+  // -------------------
+  //
+  //   useEffect(() => {
+  //     signIn({ username: "FirstUser", password: "justAString" });
+  //   }, []);
+  //
+  // -------------------
 
   return (
     <View>
@@ -78,12 +108,12 @@ const Login = ({ navigation: { navigate } }) => {
             onPress={() => signIn({ username, password })}
           />
 
-          {/* {isBiometricSupported ? (
+          {isBiometricSupported ? (
             <Button
               type="submit"
               title="Zaloguj się odciskiem palca"
               color="primary"
-              onPress={() => signIn({ username, password })}
+              onPress={() => biometrySignIn()}
             />
           ) : (
             <Button
@@ -92,7 +122,7 @@ const Login = ({ navigation: { navigate } }) => {
               color="primary"
               disabled
             />
-          )} */}
+          )}
         </Stack>
       </Flex>
     </View>
