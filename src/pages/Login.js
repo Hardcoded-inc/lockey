@@ -1,5 +1,6 @@
 import React, { useState, createRef, useContext, useEffect } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
+import * as SecureStore from "expo-secure-store";
 import { View, Keyboard } from "react-native";
 import {
   TextInput,
@@ -35,20 +36,28 @@ const Login = ({ navigation: { navigate } }) => {
   }, []);
 
   const biometrySignIn = async () => {
-    LocalAuthentication.authenticateAsync({
-      promptMessage: "dupa",
+    const res = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Login with fingerprint",
       cancelLabel: "cancel",
       disableDeviceFallback: true,
-    }).then((res) => {
-      // console.log(res);
-      // LOG  {"error": "user_cancel", "success": false, "warning": "cancel"}
-      // LOG  {"success": true}
-
-      if (res.success) {
-        console.log("yeah!");
-      }
-      // () => signIn({ username, password })
     });
+
+    if (res.success) {
+      const savedUsername = await SecureStore.getItemAsync("username");
+      const savedPassword = await SecureStore.getItemAsync("password");
+
+      setUsername(savedUsername);
+      setPassword(savedPassword);
+
+      signIn({ username: savedUsername, password: savedPassword });
+    }
+  };
+
+  const signInAndSaveCredentials = async () => {
+    await SecureStore.setItemAsync("username", username);
+    await SecureStore.setItemAsync("password", password);
+
+    signIn({ username, password });
   };
 
   // -------------------
@@ -105,7 +114,7 @@ const Login = ({ navigation: { navigate } }) => {
             type="submit"
             title="Zaloguj się"
             color="primary"
-            onPress={() => signIn({ username, password })}
+            onPress={signInAndSaveCredentials}
           />
 
           {isBiometricSupported ? (
