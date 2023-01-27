@@ -41,10 +41,13 @@ function useAuth() {
   });
 
   const signIn = useCallback(
-    ({ username, password }) => {
+    async ({ username, password }) => {
       const url = API_URL + "/login";
+      let errorMessage = null;
+      let success = false;
+      let jwt = null;
 
-      fetch(url, {
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -54,24 +57,24 @@ function useAuth() {
           username,
           password,
         }),
-      }).then((response) => {
-        if (response.status === 200) {
-          const cookie = response.headers.get("set-cookie");
-          let jwt = null;
-          if (cookie) jwt = cookie.slice(4);
-
-          dispatchJWT({
-            action: SIGN_IN,
-            payload: { jwt },
-          });
-        } else if (response.status === 401) {
-          console.warn("STATUS", response.status);
-          console.warn("Wrong password");
-        } else if (response.status === 404) {
-          console.warn("STATUS", response.status);
-          console.warn("User does not exists");
-        }
       });
+
+      if (response.status === 200) {
+        const cookie = response.headers.get("set-cookie");
+        if (cookie) jwt = cookie.slice(4);
+        success = true;
+
+        dispatchJWT({
+          action: SIGN_IN,
+          payload: { jwt },
+        });
+      } else if (response.status === 401) {
+        errorMessage = "Wrong password";
+      } else if (response.status === 404) {
+        errorMessage = "User does not exists";
+      }
+
+      return { errorMessage, success };
     },
     [dispatchJWT]
   );
