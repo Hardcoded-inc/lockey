@@ -5,10 +5,14 @@ import {
   Stack,
   Divider,
   Button,
+  Box,
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "../vars.js";
 import { useAuthState } from "../hooks/useAuth";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import QRCode from "react-native-qrcode-svg";
+
 
 export const Doors = ({ navigation }) => {
   const [doors, setDoors] = useState();
@@ -32,7 +36,23 @@ export const Doors = ({ navigation }) => {
       }
     };
 
+    const setupWebSocet = async () => {        
+      const res = await fetch(API_URL + "/negotiate");
+      const json = await res.json();
+      
+      let ws = new WebSocket(json.url);
+
+      ws.onopen= () => {
+        console.log('WebSocket Client Connected');
+      };
+
+      ws.onmessage = (message) => {
+        setDoors(JSON.parse(JSON.parse(message.data)))
+      };
+    };
+
     fetchDoors();
+    setupWebSocet()
   }, [doors]);
 
   return (
@@ -56,17 +76,21 @@ export const Doors = ({ navigation }) => {
         ) : (
           <ScrollView style={{ marginBottom: 140 }} horizontal="true">
             {doors.map((door) => (
-              <ListItem
+              <Box>
+                <ListItem
                 key={door.ID}
                 title={door.name}
                 id={"door_" + door.ID}
+                leading={<Ionicons name={'radio-button-on-outline'} size={20} color={door.is_open ? 'green' : 'red'} />}
                 onPress={() => {
                   navigation.navigate("SingleDoors", {
                     title: door.name,
                     id: door.ID,
                   });
                 }}
-              />
+                />
+                <QRCode value={[{data: door.ID, mode: 'numeric'}]} />  
+              </Box>
             ))}
           </ScrollView>
         )}
