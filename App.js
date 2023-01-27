@@ -13,6 +13,10 @@ import {
   JWTProvider,
 } from "./src/hooks/useAuth";
 
+import { Logs } from 'expo'
+
+Logs.enableExpoCliLogging()
+
 const App = () => {
   const Stack = createStackNavigator();
 
