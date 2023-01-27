@@ -75,7 +75,6 @@ const SingleDoors = ({ route, navigation }) => {
           accuracy: Location.Accuracy.Low,
         });
         setLocation(res);
-        console.log("location" + res);
       } catch (e) {
         console.log(e);
       } finally {
@@ -89,13 +88,15 @@ const SingleDoors = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    if (isLocation === true) {
+    if (isLocation === true && isLoading === false) {
       const phone_lat = location.coords.latitude.toFixed(2);
       const phone_long = location.coords.longitude.toFixed(2);
 
       //to do - replace with data from db
       const doors_lat = singleDoors.lat.toFixed(2);
       const doors_long = singleDoors.long.toFixed(2);
+
+      console.log(phone_lat, phone_long, doors_lat, doors_long);
 
       if (phone_lat === doors_lat && phone_long === doors_long) {
         setIsLocationMatched(true);
