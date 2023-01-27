@@ -59,7 +59,6 @@ const Login = ({ navigation: { navigate } }) => {
         username: savedUsername,
         password: savedPassword,
       });
-      console.warn(errorMessage);
       if (!success && errorMessage) setError(errorMessage);
     }
   };
@@ -83,7 +82,7 @@ const Login = ({ navigation: { navigate } }) => {
   //   useEffect(() => {
   //     signIn({ username: "FirstUser", password: "justAString" });
   //   }, []);
-  //
+
   // -------------------
 
   return (

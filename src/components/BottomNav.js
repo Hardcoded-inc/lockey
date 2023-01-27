@@ -5,11 +5,12 @@ import QR_View from "../pages/QR";
 import Doors from "../pages/Doors";
 import Users from "../pages/Users";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useAuthState } from "../hooks/useAuth";
 
 const Nav = createMaterialBottomTabNavigator();
 
 const BottomNav = () => {
-  const [isAdmin, setIsAdmin] = useState(true);
+  const { isAdmin } = useAuthState();
 
   return (
     <Nav.Navigator
@@ -50,14 +51,19 @@ const BottomNav = () => {
             title: "Doors list",
           }}
         />
-        <Nav.Screen
-          navigationKey={isAdmin ? "true" : "false"}
-          name="Users"
-          component={Users}
-          options={{
-            title: "Users list",
-          }}
-        />
+        {isAdmin ? (
+          <Nav.Screen
+            display="none"
+            name="Users"
+            component={Users}
+            options={{
+              title: "Users list",
+            }}
+          />
+        ) : (
+          <></>
+        )}
+
         <Nav.Screen name="QR" component={QR_View} />
       </Nav.Group>
     </Nav.Navigator>

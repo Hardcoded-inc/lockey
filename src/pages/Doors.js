@@ -13,8 +13,7 @@ import { useAuthState } from "../hooks/useAuth";
 export const Doors = ({ navigation }) => {
   const [doors, setDoors] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(true);
-  const { jwt } = useAuthState();
+  const { jwt, isAdmin } = useAuthState();
 
   useEffect(() => {
     const fetchDoors = async () => {
@@ -52,7 +51,6 @@ export const Doors = ({ navigation }) => {
           ""
         )}
 
-        <Divider style={{ marginTop: 12 }} color="green" />
         {isLoading ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : (

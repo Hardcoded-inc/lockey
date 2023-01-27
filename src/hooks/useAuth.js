@@ -1,5 +1,6 @@
 import { API_URL } from "../vars.js";
 import React, { useReducer, useContext, useCallback } from "react";
+import * as SecureStore from "expo-secure-store";
 
 export const JWTStateContext = React.createContext();
 export const JWTDispatchContext = React.createContext();
@@ -15,18 +16,21 @@ const reducer = (prevState, { action, payload }) => {
         ...prevState,
         jwt: payload.jwt,
         isLoading: false,
+        isAdmin: payload.isAdmin,
       };
     case SIGN_IN:
       return {
         ...prevState,
         isSignout: false,
         jwt: payload.jwt,
+        isAdmin: payload.isAdmin,
       };
     case SIGN_OUT:
       return {
         ...prevState,
         isSignout: true,
         jwt: null,
+        isAdmin: false,
       };
   }
 };
@@ -38,6 +42,7 @@ function useAuth() {
     isLoading: true,
     isSignout: false,
     jwt: null,
+    isAdmin: false,
   });
 
   const signIn = useCallback(
@@ -46,6 +51,7 @@ function useAuth() {
       let errorMessage = null;
       let success = false;
       let jwt = null;
+      let isAdmin = null;
 
       const response = await fetch(url, {
         method: "POST",
@@ -61,12 +67,19 @@ function useAuth() {
 
       if (response.status === 200) {
         const cookie = response.headers.get("set-cookie");
-        if (cookie) jwt = cookie.slice(4);
+        const json = await response.json();
+
+        if (cookie) {
+          jwt = json.jwt;
+          isAdmin = json.is_admin;
+        }
         success = true;
+        await SecureStore.setItemAsync("userToken", jwt);
+        await SecureStore.setItemAsync("isAdmin", String(isAdmin));
 
         dispatchJWT({
           action: SIGN_IN,
-          payload: { jwt },
+          payload: { jwt, isAdmin },
         });
       } else if (response.status === 401) {
         errorMessage = "Wrong password";
@@ -86,10 +99,10 @@ function useAuth() {
   }, [dispatchJWT]);
 
   const restoreToken = useCallback(
-    (jwt) => {
+    (jwt, isAdmin) => {
       dispatchJWT({
         action: RESTORE_TOKEN,
-        payload: { jwt },
+        payload: { jwt, isAdmin },
       });
     },
     [dispatchJWT]

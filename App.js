@@ -22,18 +22,17 @@ const App = () => {
   useEffect(() => {
     const bootstrapAsync = async () => {
       let userToken;
+      let isAdmin;
 
       try {
         userToken = await SecureStore.getItemAsync("userToken");
+        isAdmin = await SecureStore.getItemAsync("isAdmin");
+        if (isAdmin === "true") isAdmin = true;
+        else isAdmin = false;
       } catch (e) {
-        // Restoring token failed
+        console.error(e);
       }
-
-      // After restoring token, we may need to validate it in production apps
-
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      restoreToken(userToken);
+      restoreToken(userToken, isAdmin);
     };
 
     bootstrapAsync();
