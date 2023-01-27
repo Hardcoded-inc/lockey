@@ -1,4 +1,10 @@
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import {
   ListItem,
   Text,
@@ -6,6 +12,11 @@ import {
   Divider,
   Button,
   Box,
+  Provider,
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogActions,
 } from "@react-native-material/core";
 import { useState, useEffect } from "react";
 import { API_URL } from "../vars.js";
@@ -13,11 +24,12 @@ import { useAuthState } from "../hooks/useAuth";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import QRCode from "react-native-qrcode-svg";
 
-
 export const Doors = ({ navigation }) => {
   const [doors, setDoors] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const { jwt, isAdmin } = useAuthState();
+  const [visible, setVisible] = useState(false);
+  const [picked, setPicked] = useState(false);
 
   useEffect(() => {
     const fetchDoors = async () => {
@@ -36,23 +48,23 @@ export const Doors = ({ navigation }) => {
       }
     };
 
-    const setupWebSocet = async () => {        
+    const setupWebSocet = async () => {
       const res = await fetch(API_URL + "/negotiate");
       const json = await res.json();
-      
+
       let ws = new WebSocket(json.url);
 
-      ws.onopen= () => {
-        console.log('WebSocket Client Connected');
+      ws.onopen = () => {
+        console.log("WebSocket Client Connected");
       };
 
       ws.onmessage = (message) => {
-        setDoors(JSON.parse(JSON.parse(message.data)))
+        setDoors(JSON.parse(JSON.parse(message.data)));
       };
     };
 
     fetchDoors();
-    setupWebSocet()
+    setupWebSocet();
   }, [doors]);
 
   return (
@@ -74,25 +86,67 @@ export const Doors = ({ navigation }) => {
         {isLoading ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : (
-          <ScrollView style={{ marginBottom: 140 }} horizontal="true">
-            {doors.map((door) => (
-              <Box>
-                <ListItem
-                key={door.ID}
-                title={door.name}
-                id={"door_" + door.ID}
-                leading={<Ionicons name={'radio-button-on-outline'} size={20} color={door.is_open ? 'green' : 'red'} />}
-                onPress={() => {
-                  navigation.navigate("SingleDoors", {
-                    title: door.name,
-                    id: door.ID,
-                  });
-                }}
-                />
-                <QRCode value={[{data: door.ID, mode: 'numeric'}]} />  
-              </Box>
-            ))}
-          </ScrollView>
+          <>
+            <ScrollView style={{ marginBottom: 140 }} horizontal="true">
+              {doors.map((door) => (
+                <Box style={styles.image}>
+                  <ListItem
+                    key={door.ID}
+                    title={door.name}
+                    id={"door_" + door.ID}
+                    leadingMode="image"
+                    leading={
+                      <TouchableOpacity
+                        onPress={() => {
+                          setVisible(true);
+                          setPicked(door.ID);
+                        }}
+                      >
+                        <QRCode
+                          size={60}
+                          key={"image_" + door.ID}
+                          value={[{ data: door.ID, mode: "numeric" }]}
+                        />
+                      </TouchableOpacity>
+                    }
+                    trailing={
+                      <Ionicons
+                        name={"radio-button-on-outline"}
+                        size={20}
+                        color={door.is_open ? "green" : "red"}
+                      />
+                    }
+                    onPress={() => {
+                      navigation.navigate("SingleDoors", {
+                        title: door.name,
+                        id: door.ID,
+                      });
+                    }}
+                  />
+                </Box>
+              ))}
+            </ScrollView>
+            <Provider>
+              <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+                <DialogHeader title="QR Code" />
+                <DialogContent>
+                  <QRCode
+                    size={216}
+                    key={"qr_" + picked}
+                    value={[{ data: picked, mode: "numeric" }]}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    title="Ok"
+                    compact
+                    variant="text"
+                    onPress={() => setVisible(false)}
+                  />
+                </DialogActions>
+              </Dialog>
+            </Provider>
+          </>
         )}
       </Stack>
     </View>
@@ -100,3 +154,9 @@ export const Doors = ({ navigation }) => {
 };
 
 export default Doors;
+
+const styles = StyleSheet.create({
+  image: {
+    marginBottom: 16,
+  },
+});

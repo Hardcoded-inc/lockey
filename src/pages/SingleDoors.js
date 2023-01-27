@@ -104,7 +104,7 @@ const SingleDoors = ({ route, navigation }) => {
         setIsLocationMatched(false);
       }
     }
-  }, [isLocation]);
+  }, [isLocation, isLoading]);
 
   const callDoorsAPI = async () => {
     let res = null;
