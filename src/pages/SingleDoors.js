@@ -46,6 +46,13 @@ const SingleDoors = ({ route, navigation }) => {
         const json = await res.json();
         setSingleDoors(json);
         setSingleDoorsStatus(json.is_open);
+
+        // TO DO: user_id returns array of attached user_ids
+        // if (json.user_id.length > 0) {
+        //   setDoorPermission(
+        //     json.user_id.find((el) => el === json.id) ? true : false
+        //   );
+        // }
       } catch (e) {
         console.log(e);
       } finally {

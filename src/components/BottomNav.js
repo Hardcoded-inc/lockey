@@ -41,30 +41,35 @@ const BottomNav = () => {
           name="Home"
           component={Home}
           options={{
-            title: "Home",
+            title: "Strona główna",
           }}
         />
         <Nav.Screen
           name="Doors"
           component={Doors}
           options={{
-            title: "Doors list",
+            title: "Drzwi",
           }}
         />
         {isAdmin ? (
           <Nav.Screen
-            display="none"
             name="Users"
             component={Users}
             options={{
-              title: "Users list",
+              title: "Użytkownicy",
             }}
           />
         ) : (
           <></>
         )}
 
-        <Nav.Screen name="QR" component={QR_View} />
+        <Nav.Screen
+          name="QR"
+          options={{
+            title: "Skaner QR",
+          }}
+          component={QR_View}
+        />
       </Nav.Group>
     </Nav.Navigator>
   );

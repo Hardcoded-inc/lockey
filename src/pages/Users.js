@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import { API_URL } from "../vars.js";
 import { useAuthState } from "../hooks/useAuth";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export const Doors = ({ navigation }) => {
   const [users, setUsers] = useState();
@@ -24,6 +25,7 @@ export const Doors = ({ navigation }) => {
           },
         });
         const json = await res.json();
+        console.log(json);
         setUsers(json);
       } catch (e) {
         console.log(e);
@@ -33,7 +35,7 @@ export const Doors = ({ navigation }) => {
     };
 
     fetchUsers();
-  }, [users]);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -52,6 +54,7 @@ export const Doors = ({ navigation }) => {
               <ListItem
                 key={user.id}
                 title={user.username}
+                leading={<Ionicons name="person-outline" />}
                 id={"user_" + user.id}
                 onPress={() => {
                   navigation.navigate("SingleUser", {
