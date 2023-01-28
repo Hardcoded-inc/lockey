@@ -41,7 +41,7 @@ const SingleDoors = ({ route, navigation }) => {
   useEffect(() => {
     const fetchDoors = async () => {
       try {
-        const res = await fetch(API_URL + "/doors/" + id, {
+        const res = await fetch(API_URL + "/doors/" + door_id, {
           headers: {
             Bareer: jwt,
           },
