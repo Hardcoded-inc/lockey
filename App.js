@@ -31,12 +31,13 @@ const App = () => {
       try {
         userToken = await SecureStore.getItemAsync("userToken");
         isAdmin = await SecureStore.getItemAsync("isAdmin");
+        id = await SecureStore.getItemAsync("id");
         if (isAdmin === "true") isAdmin = true;
         else isAdmin = false;
       } catch (e) {
         console.error(e);
       }
-      restoreToken(userToken, isAdmin);
+      restoreToken(userToken, isAdmin, id);
     };
 
     bootstrapAsync();

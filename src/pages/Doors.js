@@ -103,7 +103,7 @@ export const Doors = ({ navigation }) => {
                       >
                         <QRCode
                           size={60}
-                          id={"image_" + door.ID}
+                          key={"image_" + door.ID}
                           value={[{ data: door.ID, mode: "numeric" }]}
                         />
                       </TouchableOpacity>
