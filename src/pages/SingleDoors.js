@@ -35,6 +35,7 @@ const SingleDoors = ({ route, navigation }) => {
 
   const {
     jwt,
+    isAdmin,
     id
   } = useAuthState();
 
@@ -50,14 +51,15 @@ const SingleDoors = ({ route, navigation }) => {
         setSingleDoors(json);
         setSingleDoorsStatus(json.is_open);
 
-        if (json.users.length > 0) {
-
-          json.users.forEach(user => {
-            if(user.ID === id) { setDoorPermission(true) }
-            console.log(user.ID)
-            console.log("user_id:", id)
-          });
-
+        if (json.users.length > 0 || isAdmin === true) {
+          if(isAdmin === true){
+            setDoorPermission(true)
+          }else{
+            json.users.forEach(user => {
+              if(user.ID === id) { setDoorPermission(true) }
+            });
+          }
+            
         }
       } catch (e) {
         console.log(e);
@@ -76,23 +78,23 @@ const SingleDoors = ({ route, navigation }) => {
     };
 
     const checkLocalisation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      try {
-        const res = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Low,
-        });
-        setLocation(res);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setIsLocation(true);
-      }
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
+        
+        try {
+          const res = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Low,
+          });
+          setLocation(res);
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setIsLocation(true);
+        }
     };
 
     fetchDoors();
@@ -101,6 +103,9 @@ const SingleDoors = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
+    if(isAdmin === true){
+      setIsLocationMatched(true);
+    }else{
     if (isLocation === true && isLoading === false) {
       const phone_lat = location.coords.latitude.toFixed(2);
       const phone_long = location.coords.longitude.toFixed(2);
@@ -109,15 +114,14 @@ const SingleDoors = ({ route, navigation }) => {
       const doors_lat = singleDoors.lat.toFixed(2);
       const doors_long = singleDoors.long.toFixed(2);
 
-      console.log(phone_lat, phone_long, doors_lat, doors_long);
-
       if (phone_lat === doors_lat && phone_long === doors_long) {
         setIsLocationMatched(true);
       } else {
         setIsLocationMatched(false);
       }
     }
-  }, [isLocation, isLoading]);
+  }
+  }, [isLoading, isLocation ]);
 
   const callDoorsAPI = async () => {
     let res = null;
