@@ -123,7 +123,7 @@ const SingleDoors = ({ route, navigation }) => {
   }
   }, [isLoading, isLocation ]);
 
-  const callDoorsAPI = async () => {
+  const openDoorApi = async () => {
     let res = null;
     try {
       res = await fetch(API_URL + "/doors/" + door_id + "/open", {
@@ -146,6 +146,50 @@ const SingleDoors = ({ route, navigation }) => {
     }
   };
 
+  const DeleteDoorsApi = async () => {
+    let res = null;
+    try {
+      res = await fetch(API_URL + "/doors/" + door_id, {
+        method: "DELETE",
+        headers: {
+          Bareer: jwt,
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      if (res.status === 200) {
+        alert(
+          "Drzwi zostały usunięte"
+        );
+        navigation.navigate("Doors")
+      } else {
+        alert("Wystąpił błąd");
+      }
+    }
+  };
+
+  const deleteDoors = async () => {
+    const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
+
+    if (!savedBiometrics) {
+      return alert(
+        "Biometric record not found",
+        "Please verify your identity with your password",
+        "OK",
+        () => fallBackToDefaultAuth()
+      );
+    } else {
+      const biometricAuth = await LocalAuthentication.authenticateAsync();
+
+      if (biometricAuth.success === true) {
+        DeleteDoorsApi();
+      } else {
+        alert("Spróbuj ponownie");
+      }
+    }
+  };
+
   const openDoors = async () => {
     const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
 
@@ -160,7 +204,7 @@ const SingleDoors = ({ route, navigation }) => {
       const biometricAuth = await LocalAuthentication.authenticateAsync();
 
       if (biometricAuth.success === true) {
-        callDoorsAPI();
+        openDoorApi();
       } else {
         alert("Spróbuj ponownie");
       }
@@ -314,6 +358,18 @@ const SingleDoors = ({ route, navigation }) => {
                   </>
                 )}
               </Flex>
+            </Flex>
+            <Flex>
+              {isAdmin ? (
+                <Button
+                title="Usuń drzwi"
+                compact
+                variant="text"
+                onPress={() => deleteDoors(false)}
+                />
+              ) : (
+                <></>
+              )}
             </Flex>
           </Stack>
         </>
