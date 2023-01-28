@@ -30,12 +30,12 @@ const SingleDoors = ({ route, navigation }) => {
   const [isBiometry, setIsBiomtery] = useState(false);
   const [isLocation, setIsLocation] = useState(false);
   const [location, setLocation] = useState();
-  const [doorPermission, setDoorPermission] = useState(true);
+  const [doorPermission, setDoorPermission] = useState(false);
   const [isLocationMatched, setIsLocationMatched] = useState(false);
 
   const {
     jwt,
-    // id
+    id
   } = useAuthState();
 
   useEffect(() => {
@@ -50,11 +50,15 @@ const SingleDoors = ({ route, navigation }) => {
         setSingleDoors(json);
         setSingleDoorsStatus(json.is_open);
 
-        // if (json.users.length > 0) {
-        //   json.users.map((user) =>
-        //     user.ID === id ? setDoorPermission(true) : ""
-        //   );
-        // }
+        if (json.users.length > 0) {
+
+          json.users.forEach(user => {
+            if(user.ID === id) { setDoorPermission(true) }
+            console.log(user.ID)
+            console.log("user_id:", id)
+          });
+
+        }
       } catch (e) {
         console.log(e);
       } finally {
@@ -118,7 +122,7 @@ const SingleDoors = ({ route, navigation }) => {
   const callDoorsAPI = async () => {
     let res = null;
     try {
-      res = await fetch(API_URL + "/doors/" + id + "/open", {
+      res = await fetch(API_URL + "/doors/" + door_id + "/open", {
         method: "POST",
         headers: {
           Bareer: jwt,
