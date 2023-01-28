@@ -96,7 +96,7 @@ export const Doors = ({ navigation }) => {
           <>
             <ScrollView style={{ marginBottom: 140 }} horizontal="true">
               {doors.map((door) => (
-                <Box style={styles.image}>
+                <Box key={"box" + door.ID} style={styles.image}>
                   <ListItem
                     key={door.ID}
                     title={door.name}

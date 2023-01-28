@@ -56,7 +56,7 @@ const SingleDoors = ({ route, navigation }) => {
             setDoorPermission(true)
           }else{
             json.users.forEach(user => {
-              if(user.ID === id) { setDoorPermission(true) }
+              if(user.ID == id) { setDoorPermission(true)}
             });
           }
             

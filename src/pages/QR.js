@@ -18,7 +18,7 @@ const QR_View = ({ route, navigation }) => {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     navigation.navigate("SingleDoors", {
-      id: data,
+      door_id: data,
     });
   };
 
