@@ -29,6 +29,7 @@ export const Doors = ({ navigation }) => {
   const { jwt, isAdmin } = useAuthState();
   const [visible, setVisible] = useState(false);
   const [picked, setPicked] = useState(false);
+  const [reloadDoors, setReloadDooors] = useState(false)
 
   useEffect(() => {
     const fetchDoors = async () => {
@@ -43,10 +44,15 @@ export const Doors = ({ navigation }) => {
       } catch (e) {
         console.log(e);
       } finally {
+        setReloadDooors(false)
         setIsLoading(false);
       }
     };
 
+    fetchDoors();
+  }, [doors, reloadDoors]);
+
+  useEffect(() => {
     const setupWebSocet = async () => {
       const res = await fetch(API_URL + "/negotiate");
       const json = await res.json();
@@ -58,13 +64,15 @@ export const Doors = ({ navigation }) => {
       };
 
       ws.onmessage = (message) => {
-        setDoors(JSON.parse(JSON.parse(message.data)));
+        data = JSON.parse(JSON.parse(message.data));
+        if (data.modified_resource === 'doors') {
+          setReloadDooors(true)
+        }
       };
     };
 
-    fetchDoors();
     setupWebSocet();
-  }, [doors]);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
