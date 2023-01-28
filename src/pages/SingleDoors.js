@@ -22,7 +22,7 @@ import * as Location from "expo-location";
 import { useAuthState } from "../hooks/useAuth";
 
 const SingleDoors = ({ route, navigation }) => {
-  const { id } = route.params;
+  const { door_id } = route.params;
 
   const [singleDoors, setSingleDoors] = useState();
   const [singleDoorsStatus, setSingleDoorsStatus] = useState();
@@ -33,7 +33,10 @@ const SingleDoors = ({ route, navigation }) => {
   const [doorPermission, setDoorPermission] = useState(true);
   const [isLocationMatched, setIsLocationMatched] = useState(false);
 
-  const { jwt } = useAuthState();
+  const {
+    jwt,
+    // id
+  } = useAuthState();
 
   useEffect(() => {
     const fetchDoors = async () => {
@@ -47,10 +50,9 @@ const SingleDoors = ({ route, navigation }) => {
         setSingleDoors(json);
         setSingleDoorsStatus(json.is_open);
 
-        // TO DO: user_id returns array of attached user_ids
-        // if (json.user_id.length > 0) {
-        //   setDoorPermission(
-        //     json.user_id.find((el) => el === json.id) ? true : false
+        // if (json.users.length > 0) {
+        //   json.users.map((user) =>
+        //     user.ID === id ? setDoorPermission(true) : ""
         //   );
         // }
       } catch (e) {

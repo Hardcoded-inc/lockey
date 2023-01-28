@@ -17,6 +17,7 @@ const reducer = (prevState, { action, payload }) => {
         jwt: payload.jwt,
         isLoading: false,
         isAdmin: payload.isAdmin,
+        // id: payload.id,
       };
     case SIGN_IN:
       return {
@@ -24,6 +25,7 @@ const reducer = (prevState, { action, payload }) => {
         isSignout: false,
         jwt: payload.jwt,
         isAdmin: payload.isAdmin,
+        // id: payload.id,
       };
     case SIGN_OUT:
       return {
@@ -31,6 +33,7 @@ const reducer = (prevState, { action, payload }) => {
         isSignout: true,
         jwt: null,
         isAdmin: false,
+        //  id: null,
       };
   }
 };
@@ -43,6 +46,7 @@ function useAuth() {
     isSignout: false,
     jwt: null,
     isAdmin: false,
+    //  id: null,
   });
 
   const signIn = useCallback(
@@ -52,6 +56,7 @@ function useAuth() {
       let success = false;
       let jwt = null;
       let isAdmin = null;
+      let id = null;
 
       const response = await fetch(url, {
         method: "POST",
@@ -72,14 +77,20 @@ function useAuth() {
         if (cookie) {
           jwt = json.jwt;
           isAdmin = json.is_admin;
+          //id = json.id
         }
         success = true;
         await SecureStore.setItemAsync("userToken", jwt);
         await SecureStore.setItemAsync("isAdmin", String(isAdmin));
+        // await SecureStore.setItemAsync("id", id);
 
         dispatchJWT({
           action: SIGN_IN,
-          payload: { jwt, isAdmin },
+          payload: {
+            jwt,
+            isAdmin,
+            //id
+          },
         });
       } else if (response.status === 401) {
         errorMessage = "Wrong password";
@@ -102,7 +113,11 @@ function useAuth() {
     (jwt, isAdmin) => {
       dispatchJWT({
         action: RESTORE_TOKEN,
-        payload: { jwt, isAdmin },
+        payload: {
+          jwt,
+          isAdmin,
+          //	id
+        },
       });
     },
     [dispatchJWT]

@@ -9,7 +9,6 @@ import {
   ListItem,
   Text,
   Stack,
-  Divider,
   Button,
   Box,
   Provider,
@@ -119,7 +118,7 @@ export const Doors = ({ navigation }) => {
                     onPress={() => {
                       navigation.navigate("SingleDoors", {
                         title: door.name,
-                        id: door.ID,
+                        door_id: door.ID,
                       });
                     }}
                   />
